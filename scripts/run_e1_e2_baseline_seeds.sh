@@ -37,10 +37,13 @@ E1_CONFIGS=(
   "llama3_1_8b_instruct dora    256"
 )
 
+# CONDA_ENV must be open_manus (transformers 4.51.3): the control env's 4.45.0
+# does not know the qwen3 architecture. The original seed-42 sweep ran in
+# open_manus as well (verified from env paths in the seed-42 logs).
 for cfg in "${E1_CONFIGS[@]}"; do
   read -r model method rank <<<"$cfg"
   echo "===== E1 config: $model $method r$rank seeds 43 44 $(date +%F_%H:%M:%S) ====="
-  SEEDS="43 44" METHODS="$method" RANKS="$rank" RUN_MODELS="$model" bash "$SWEEP" \
+  CONDA_ENV=open_manus SEEDS="43 44" METHODS="$method" RANKS="$rank" RUN_MODELS="$model" bash "$SWEEP" \
     || echo "[E1-FAIL] $model $method r$rank (continuing)"
 done
 
