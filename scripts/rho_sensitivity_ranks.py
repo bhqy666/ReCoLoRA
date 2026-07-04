@@ -114,7 +114,7 @@ ax.grid(alpha=0.3)
 
 params = np.array([results[r]["principal_params"] for r in RHOS])
 ax = axes[1]
-ax.plot(rhos_arr, params, "o-", color="tab:green", label="HiLoRA principal params")
+ax.plot(rhos_arr, params, "o-", color="tab:green", label="ReCoLoRA principal params")
 ax.axhline(LORA_R16_PARAMS, color="tab:purple", linestyle="--", label="LoRA $r=16$ params")
 ax.axvline(0.8, color="tab:red", linestyle="--", label=r"default $\rho=0.8$")
 ax.set_xlabel(r"Energy threshold $\rho$")
