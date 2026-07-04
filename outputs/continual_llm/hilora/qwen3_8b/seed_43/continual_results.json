@@ -1,0 +1,333 @@
+{
+  "config": {
+    "epochs_per_task": 1.0,
+    "fp16": true,
+    "gradient_accumulation_steps": 8,
+    "gradient_checkpointing": true,
+    "hilora_dynamic_recovery": true,
+    "hilora_elbow_ratio": 1.5,
+    "hilora_energy_threshold": 0.9,
+    "hilora_mask_interval": 1,
+    "hilora_max_rank": 16,
+    "hilora_min_rank": 2,
+    "hilora_rank_beta1": 0.85,
+    "hilora_rank_beta2": 0.85,
+    "hilora_recovery_ratio_mode": "kept",
+    "hilora_residual_rank": 4,
+    "hilora_stage1_ratio": 0.75,
+    "hilora_svd_device": "cuda",
+    "hilora_svd_n_iter": 1,
+    "hilora_svd_oversample": 5,
+    "hilora_target_rank_ratio": 0.5,
+    "learning_rate": 0.0002,
+    "lora_alpha": 16.0,
+    "lora_dropout": 0.0,
+    "lora_r": 8,
+    "max_eval_samples_per_task": 1000,
+    "max_grad_norm": 1.0,
+    "max_length": 256,
+    "max_steps_per_task": 200,
+    "max_train_samples_per_task": null,
+    "method": "hilora",
+    "model_name_or_path": "/home/bhqy/.cache/huggingface/hub/models--Qwen--Qwen3-8B/snapshots/b968826d9c46dd6066d109eabc6255188de91218",
+    "output_dir": "outputs/continual_llm/hilora/qwen3_8b/seed_43",
+    "per_device_eval_batch_size": 4,
+    "per_device_train_batch_size": 1,
+    "residual_lr": 0.0001,
+    "seed": 43,
+    "target_modules": "auto",
+    "tasks": "sst2,mrpc,qnli,rte,qqp,mnli",
+    "torch_dtype": "float16",
+    "trust_remote_code": true,
+    "warmup_ratio": 0.03,
+    "weight_decay": 0.0
+  },
+  "parameter_counts": {
+    "adapter_params": 7668864,
+    "total_params": 8198404224,
+    "trainable_params": 7668864
+  },
+  "records": [
+    {
+      "accuracy": 0.9541284403669725,
+      "eval_task": "sst2",
+      "f1": null,
+      "loss": 0.1974700022310905,
+      "score": 0.9541284403669725,
+      "stage_index": 1,
+      "stage_task": "sst2"
+    },
+    {
+      "accuracy": 0.9529816513761468,
+      "eval_task": "sst2",
+      "f1": null,
+      "loss": 0.14001819771711038,
+      "score": 0.9529816513761468,
+      "stage_index": 2,
+      "stage_task": "mrpc"
+    },
+    {
+      "accuracy": 0.8897058823529411,
+      "eval_task": "mrpc",
+      "f1": 0.9197860962566845,
+      "loss": 0.1534072772593194,
+      "score": 0.9197860962566845,
+      "stage_index": 2,
+      "stage_task": "mrpc"
+    },
+    {
+      "accuracy": 0.9552752293577982,
+      "eval_task": "sst2",
+      "f1": null,
+      "loss": 0.1339404168929248,
+      "score": 0.9552752293577982,
+      "stage_index": 3,
+      "stage_task": "qnli"
+    },
+    {
+      "accuracy": 0.8725490196078431,
+      "eval_task": "mrpc",
+      "f1": 0.9100346020761245,
+      "loss": 0.1628837059782681,
+      "score": 0.9100346020761245,
+      "stage_index": 3,
+      "stage_task": "qnli"
+    },
+    {
+      "accuracy": 0.915,
+      "eval_task": "qnli",
+      "f1": null,
+      "loss": 0.0904753256564727,
+      "score": 0.915,
+      "stage_index": 3,
+      "stage_task": "qnli"
+    },
+    {
+      "accuracy": 0.9552752293577982,
+      "eval_task": "sst2",
+      "f1": null,
+      "loss": 0.16098255063209538,
+      "score": 0.9552752293577982,
+      "stage_index": 4,
+      "stage_task": "rte"
+    },
+    {
+      "accuracy": 0.8186274509803921,
+      "eval_task": "mrpc",
+      "f1": 0.8543307086614174,
+      "loss": 0.4241496363295785,
+      "score": 0.8543307086614174,
+      "stage_index": 4,
+      "stage_task": "rte"
+    },
+    {
+      "accuracy": 0.91,
+      "eval_task": "qnli",
+      "f1": null,
+      "loss": 0.14164629532043183,
+      "score": 0.91,
+      "stage_index": 4,
+      "stage_task": "rte"
+    },
+    {
+      "accuracy": 0.9205776173285198,
+      "eval_task": "rte",
+      "f1": null,
+      "loss": 0.08911872359922758,
+      "score": 0.9205776173285198,
+      "stage_index": 4,
+      "stage_task": "rte"
+    },
+    {
+      "accuracy": 0.9564220183486238,
+      "eval_task": "sst2",
+      "f1": null,
+      "loss": 0.14588593455606114,
+      "score": 0.9564220183486238,
+      "stage_index": 5,
+      "stage_task": "qqp"
+    },
+    {
+      "accuracy": 0.8651960784313726,
+      "eval_task": "mrpc",
+      "f1": 0.9046793760831888,
+      "loss": 0.21467229690147088,
+      "score": 0.9046793760831888,
+      "stage_index": 5,
+      "stage_task": "qqp"
+    },
+    {
+      "accuracy": 0.904,
+      "eval_task": "qnli",
+      "f1": null,
+      "loss": 0.13460091277808534,
+      "score": 0.904,
+      "stage_index": 5,
+      "stage_task": "qqp"
+    },
+    {
+      "accuracy": 0.9025270758122743,
+      "eval_task": "rte",
+      "f1": null,
+      "loss": 0.08830702090375327,
+      "score": 0.9025270758122743,
+      "stage_index": 5,
+      "stage_task": "qqp"
+    },
+    {
+      "accuracy": 0.858,
+      "eval_task": "qqp",
+      "f1": 0.8016759776536312,
+      "loss": 0.22391109684563706,
+      "score": 0.8016759776536312,
+      "stage_index": 5,
+      "stage_task": "qqp"
+    },
+    {
+      "accuracy": 0.9541284403669725,
+      "eval_task": "sst2",
+      "f1": null,
+      "loss": 0.1496024428267839,
+      "score": 0.9541284403669725,
+      "stage_index": 6,
+      "stage_task": "mnli"
+    },
+    {
+      "accuracy": 0.7965686274509803,
+      "eval_task": "mrpc",
+      "f1": 0.8382066276803118,
+      "loss": 0.35093238329792775,
+      "score": 0.8382066276803118,
+      "stage_index": 6,
+      "stage_task": "mnli"
+    },
+    {
+      "accuracy": 0.904,
+      "eval_task": "qnli",
+      "f1": null,
+      "loss": 0.13137534805858742,
+      "score": 0.904,
+      "stage_index": 6,
+      "stage_task": "mnli"
+    },
+    {
+      "accuracy": 0.9025270758122743,
+      "eval_task": "rte",
+      "f1": null,
+      "loss": 0.10167479547804359,
+      "score": 0.9025270758122743,
+      "stage_index": 6,
+      "stage_task": "mnli"
+    },
+    {
+      "accuracy": 0.868,
+      "eval_task": "qqp",
+      "f1": 0.8075801749271136,
+      "loss": 0.23653658185875975,
+      "score": 0.8075801749271136,
+      "stage_index": 6,
+      "stage_task": "mnli"
+    },
+    {
+      "accuracy": 0.888,
+      "eval_task": "mnli",
+      "f1": null,
+      "loss": 0.29410964352221347,
+      "score": 0.888,
+      "stage_index": 6,
+      "stage_task": "mnli"
+    }
+  ],
+  "summary": {
+    "average_final_score": 0.882407053131112,
+    "average_forgetting": 0.0225847176148539,
+    "per_task": {
+      "mnli": {
+        "best_score": 0.888,
+        "final_score": 0.888,
+        "forgetting": 0.0
+      },
+      "mrpc": {
+        "best_score": 0.9197860962566845,
+        "final_score": 0.8382066276803118,
+        "forgetting": 0.08157946857637266
+      },
+      "qnli": {
+        "best_score": 0.915,
+        "final_score": 0.904,
+        "forgetting": 0.01100000000000001
+      },
+      "qqp": {
+        "best_score": 0.8075801749271136,
+        "final_score": 0.8075801749271136,
+        "forgetting": 0.0
+      },
+      "rte": {
+        "best_score": 0.9205776173285198,
+        "final_score": 0.9025270758122743,
+        "forgetting": 0.018050541516245522
+      },
+      "sst2": {
+        "best_score": 0.9564220183486238,
+        "final_score": 0.9541284403669725,
+        "forgetting": 0.002293577981651307
+      }
+    }
+  },
+  "train_records": [
+    {
+      "recovery_kept_rank": 590,
+      "recovery_mean_recovery_ratio": 0.5121527777777778,
+      "recovery_rank_budget": 576,
+      "stage_index": 1,
+      "task": "sst2",
+      "train_loss": 0.23377988528752194,
+      "train_steps": 200
+    },
+    {
+      "recovery_kept_rank": 589,
+      "recovery_mean_recovery_ratio": 0.5112847222222222,
+      "recovery_rank_budget": 576,
+      "stage_index": 2,
+      "task": "mrpc",
+      "train_loss": 0.2461426664078172,
+      "train_steps": 200
+    },
+    {
+      "recovery_kept_rank": 589,
+      "recovery_mean_recovery_ratio": 0.5112847222222222,
+      "recovery_rank_budget": 576,
+      "stage_index": 3,
+      "task": "qnli",
+      "train_loss": 0.12871271791455682,
+      "train_steps": 200
+    },
+    {
+      "recovery_kept_rank": 604,
+      "recovery_mean_recovery_ratio": 0.5243055555555556,
+      "recovery_rank_budget": 576,
+      "stage_index": 4,
+      "task": "rte",
+      "train_loss": 0.12158263119927881,
+      "train_steps": 200
+    },
+    {
+      "recovery_kept_rank": 588,
+      "recovery_mean_recovery_ratio": 0.5104166666666666,
+      "recovery_rank_budget": 576,
+      "stage_index": 5,
+      "task": "qqp",
+      "train_loss": 0.2761036884422947,
+      "train_steps": 200
+    },
+    {
+      "recovery_kept_rank": 597,
+      "recovery_mean_recovery_ratio": 0.5182291666666666,
+      "recovery_rank_budget": 576,
+      "stage_index": 6,
+      "task": "mnli",
+      "train_loss": 0.3597372051480568,
+      "train_steps": 200
+    }
+  ]
+}

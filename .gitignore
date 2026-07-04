@@ -1,0 +1,33 @@
+# local-only material
+logs/
+archive/
+results/
+arxiv_v1_upload/
+arxiv_v1_upload.tar.gz
+CLEANUP_NOTES.md
+人脑多任务学习借鉴.pdf
+LLM微调.docx
+
+# python
+__pycache__/
+*.pyc
+
+# latex build artifacts
+main.pdf
+*.aux
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.out
+main.log
+
+# editors / agents
+.vscode/
+.claude/
+.codex/
+.agents/
+
+# backups
+*.bak
+*.bak[0-9]

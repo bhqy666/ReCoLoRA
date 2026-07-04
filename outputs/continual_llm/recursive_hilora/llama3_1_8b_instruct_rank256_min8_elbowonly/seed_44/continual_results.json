@@ -1,0 +1,4087 @@
+{
+  "config": {
+    "adalora_delta_t": 10,
+    "adalora_init_r": 24,
+    "adalora_orth_reg_weight": 0.5,
+    "adalora_target_r": 16,
+    "adalora_tfinal": 50,
+    "adalora_tinit": 0,
+    "current_learning_rate": 0.0002,
+    "current_max_steps_per_task": -1,
+    "current_residual_lr": 2e-05,
+    "epochs_per_task": 1.0,
+    "fp16": true,
+    "gradient_accumulation_steps": 8,
+    "gradient_checkpointing": true,
+    "hilora_allocate_full_rank": false,
+    "hilora_anchor_weight": 0.0,
+    "hilora_depth_bonus_map": "",
+    "hilora_dynamic_recovery": false,
+    "hilora_elbow_ratio": 1.5,
+    "hilora_energy_threshold": 0.9,
+    "hilora_force_rank": null,
+    "hilora_freeze_old_ranks": false,
+    "hilora_init_strategy": "svd",
+    "hilora_layer_bonus_map": "",
+    "hilora_mask_interval": 1,
+    "hilora_max_rank": 16,
+    "hilora_min_new_ranks_per_task": 0,
+    "hilora_min_rank": 2,
+    "hilora_old_rank_grad_scale": 1.0,
+    "hilora_old_train_tail": 0,
+    "hilora_orth_weight": 0.0,
+    "hilora_preserve_inactive_ranks": false,
+    "hilora_rank_beta1": 0.85,
+    "hilora_rank_beta2": 0.85,
+    "hilora_recovery_ratio_mode": "kept",
+    "hilora_residual_rank": 4,
+    "hilora_stage1_ratio": 0.75,
+    "hilora_svd_device": "cuda",
+    "hilora_svd_n_iter": 1,
+    "hilora_svd_oversample": 5,
+    "hilora_target_rank_ratio": 0.5,
+    "hilora_task_bonus_default": 1,
+    "hilora_task_bonus_map": "sst2:0,mrpc:1,qnli:1,rte:2,qqp:1,mnli:2",
+    "hilora_task_elbow_energy_threshold": 0.0,
+    "hilora_task_min_active_rank": 0,
+    "hilora_taskwise_elbow": false,
+    "learning_rate": 0.0002,
+    "lora_alpha": 16.0,
+    "lora_dropout": 0.0,
+    "lora_r": 8,
+    "max_eval_samples_per_task": 1000,
+    "max_grad_norm": 1.0,
+    "max_length": 256,
+    "max_steps_per_task": 200,
+    "max_train_samples_per_task": null,
+    "method": "recursive_hilora",
+    "model_name_or_path": "/home/bhqy/.cache/huggingface/hub/models--meta-llama--Meta-Llama-3.1-8B-Instruct/snapshots/0e9e39f249a16976918f6564b8830bc894c89659",
+    "output_dir": "outputs/continual_llm/recursive_hilora/llama3_1_8b_instruct_rank256_min8_elbowonly/seed_44",
+    "per_device_eval_batch_size": 1,
+    "per_device_train_batch_size": 1,
+    "pissa_niter": 4,
+    "recursive_consolidate_verbose": false,
+    "recursive_elbow_ratio": 1.5,
+    "recursive_energy_threshold": 0.9,
+    "recursive_fast_rank_bonus": 3,
+    "recursive_fast_rank_multiplier": 1.2,
+    "recursive_max_fast_rank": null,
+    "recursive_max_rank": 256,
+    "recursive_min_fast_rank": 4,
+    "recursive_min_rank": 8,
+    "recursive_slow_anchor_weight": 0.0,
+    "recursive_slow_ramp_min_scale": 0.0,
+    "recursive_slow_ramp_start": 0.5,
+    "recursive_svd_device": "cpu",
+    "recursive_svd_n_iter": 1,
+    "recursive_svd_oversample": 5,
+    "residual_lr": 2e-05,
+    "seed": 44,
+    "target_modules": "q_proj,v_proj",
+    "task_learning_rate_map": "",
+    "task_max_steps_map": "",
+    "task_residual_lr_map": "",
+    "tasks": "sst2,mrpc,qnli,rte,qqp,mnli",
+    "torch_dtype": "float16",
+    "trust_remote_code": true,
+    "warmup_ratio": 0.03,
+    "weight_decay": 0.0
+  },
+  "parameter_counts": {
+    "adapter_params": 24536064,
+    "total_params": 8054797312,
+    "trainable_params": 24536064
+  },
+  "records": [
+    {
+      "accuracy": 0.9564220183486238,
+      "eval_task": "sst2",
+      "f1": null,
+      "loss": 0.15321868723607823,
+      "score": 0.9564220183486238,
+      "stage_index": 1,
+      "stage_task": "sst2"
+    },
+    {
+      "accuracy": 0.9587155963302753,
+      "eval_task": "sst2",
+      "f1": null,
+      "loss": 0.14409669235097983,
+      "score": 0.9587155963302753,
+      "stage_index": 2,
+      "stage_task": "mrpc"
+    },
+    {
+      "accuracy": 0.8455882352941176,
+      "eval_task": "mrpc",
+      "f1": 0.8839779005524862,
+      "loss": 0.217227969082659,
+      "score": 0.8839779005524862,
+      "stage_index": 2,
+      "stage_task": "mrpc"
+    },
+    {
+      "accuracy": 0.9541284403669725,
+      "eval_task": "sst2",
+      "f1": null,
+      "loss": 0.1343953032610944,
+      "score": 0.9541284403669725,
+      "stage_index": 3,
+      "stage_task": "qnli"
+    },
+    {
+      "accuracy": 0.8455882352941176,
+      "eval_task": "mrpc",
+      "f1": 0.8848263254113347,
+      "loss": 0.2109903631236532,
+      "score": 0.8848263254113347,
+      "stage_index": 3,
+      "stage_task": "qnli"
+    },
+    {
+      "accuracy": 0.909,
+      "eval_task": "qnli",
+      "f1": null,
+      "loss": 0.09161391935867141,
+      "score": 0.909,
+      "stage_index": 3,
+      "stage_task": "qnli"
+    },
+    {
+      "accuracy": 0.9518348623853211,
+      "eval_task": "sst2",
+      "f1": null,
+      "loss": 0.1381900456005805,
+      "score": 0.9518348623853211,
+      "stage_index": 4,
+      "stage_task": "rte"
+    },
+    {
+      "accuracy": 0.7009803921568627,
+      "eval_task": "mrpc",
+      "f1": 0.7227272727272727,
+      "loss": 0.7265874147375214,
+      "score": 0.7227272727272727,
+      "stage_index": 4,
+      "stage_task": "rte"
+    },
+    {
+      "accuracy": 0.887,
+      "eval_task": "qnli",
+      "f1": null,
+      "loss": 0.1386504187087994,
+      "score": 0.887,
+      "stage_index": 4,
+      "stage_task": "rte"
+    },
+    {
+      "accuracy": 0.9025270758122743,
+      "eval_task": "rte",
+      "f1": null,
+      "loss": 0.11328964296848465,
+      "score": 0.9025270758122743,
+      "stage_index": 4,
+      "stage_task": "rte"
+    },
+    {
+      "accuracy": 0.9506880733944955,
+      "eval_task": "sst2",
+      "f1": null,
+      "loss": 0.13098347789775222,
+      "score": 0.9506880733944955,
+      "stage_index": 5,
+      "stage_task": "qqp"
+    },
+    {
+      "accuracy": 0.7034313725490197,
+      "eval_task": "mrpc",
+      "f1": 0.7305122494432071,
+      "loss": 0.5678781709915105,
+      "score": 0.7305122494432071,
+      "stage_index": 5,
+      "stage_task": "qqp"
+    },
+    {
+      "accuracy": 0.849,
+      "eval_task": "qnli",
+      "f1": null,
+      "loss": 0.1855841382491635,
+      "score": 0.849,
+      "stage_index": 5,
+      "stage_task": "qqp"
+    },
+    {
+      "accuracy": 0.8916967509025271,
+      "eval_task": "rte",
+      "f1": null,
+      "loss": 0.11832083727791863,
+      "score": 0.8916967509025271,
+      "stage_index": 5,
+      "stage_task": "qqp"
+    },
+    {
+      "accuracy": 0.857,
+      "eval_task": "qqp",
+      "f1": 0.7769110764430578,
+      "loss": 0.2618134992326086,
+      "score": 0.7769110764430578,
+      "stage_index": 5,
+      "stage_task": "qqp"
+    },
+    {
+      "accuracy": 0.9552752293577982,
+      "eval_task": "sst2",
+      "f1": null,
+      "loss": 0.13783075701101535,
+      "score": 0.9552752293577982,
+      "stage_index": 6,
+      "stage_task": "mnli"
+    },
+    {
+      "accuracy": 0.7230392156862745,
+      "eval_task": "mrpc",
+      "f1": 0.7640918580375784,
+      "loss": 0.4677492591840122,
+      "score": 0.7640918580375784,
+      "stage_index": 6,
+      "stage_task": "mnli"
+    },
+    {
+      "accuracy": 0.874,
+      "eval_task": "qnli",
+      "f1": null,
+      "loss": 0.1633588369054778,
+      "score": 0.874,
+      "stage_index": 6,
+      "stage_task": "mnli"
+    },
+    {
+      "accuracy": 0.9025270758122743,
+      "eval_task": "rte",
+      "f1": null,
+      "loss": 0.11607466424944696,
+      "score": 0.9025270758122743,
+      "stage_index": 6,
+      "stage_task": "mnli"
+    },
+    {
+      "accuracy": 0.858,
+      "eval_task": "qqp",
+      "f1": 0.7746031746031745,
+      "loss": 0.28109487250531673,
+      "score": 0.7746031746031745,
+      "stage_index": 6,
+      "stage_task": "mnli"
+    },
+    {
+      "accuracy": 0.862,
+      "eval_task": "mnli",
+      "f1": null,
+      "loss": 0.458680920418682,
+      "score": 0.862,
+      "stage_index": 6,
+      "stage_task": "mnli"
+    }
+  ],
+  "summary": {
+    "average_final_score": 0.8554162229684709,
+    "average_forgetting": 0.032296547237223326,
+    "per_task": {
+      "mnli": {
+        "best_score": 0.862,
+        "final_score": 0.862,
+        "forgetting": 0.0
+      },
+      "mrpc": {
+        "best_score": 0.8848263254113347,
+        "final_score": 0.7640918580375784,
+        "forgetting": 0.12073446737375626
+      },
+      "qnli": {
+        "best_score": 0.909,
+        "final_score": 0.874,
+        "forgetting": 0.03500000000000003
+      },
+      "qqp": {
+        "best_score": 0.7769110764430578,
+        "final_score": 0.7746031746031745,
+        "forgetting": 0.002307901839883275
+      },
+      "rte": {
+        "best_score": 0.9025270758122743,
+        "final_score": 0.9025270758122743,
+        "forgetting": 0.0
+      },
+      "sst2": {
+        "best_score": 0.9587155963302753,
+        "final_score": 0.9552752293577982,
+        "forgetting": 0.0034403669724770714
+      }
+    }
+  },
+  "train_records": [
+    {
+      "consolidate_layer_ranks": [
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.0.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9296294340165332e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.0.self_attn.v_proj",
+          "new_fast_rank": 24,
+          "new_slow_rank": 20,
+          "old_slow_rank": 17,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.112363084449953e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.1.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9277186069643903e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.1.self_attn.v_proj",
+          "new_fast_rank": 26,
+          "new_slow_rank": 21,
+          "old_slow_rank": 17,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0178260839998075e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.2.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.756957956899896e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.2.self_attn.v_proj",
+          "new_fast_rank": 51,
+          "new_slow_rank": 42,
+          "old_slow_rank": 40,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1389862325804643e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.3.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.771758562085779e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.3.self_attn.v_proj",
+          "new_fast_rank": 63,
+          "new_slow_rank": 52,
+          "old_slow_rank": 52,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.094151163589686e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.4.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.84689756821399e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.4.self_attn.v_proj",
+          "new_fast_rank": 40,
+          "new_slow_rank": 33,
+          "old_slow_rank": 31,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1159104690582353e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.5.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8498376164188812e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.5.self_attn.v_proj",
+          "new_fast_rank": 54,
+          "new_slow_rank": 45,
+          "old_slow_rank": 32,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.2117792042308793e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.6.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8563977022267864e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.6.self_attn.v_proj",
+          "new_fast_rank": 47,
+          "new_slow_rank": 39,
+          "old_slow_rank": 42,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1823264972908873e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.7.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.901036306151127e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.7.self_attn.v_proj",
+          "new_fast_rank": 70,
+          "new_slow_rank": 58,
+          "old_slow_rank": 58,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1992196508335837e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.8.self_attn.q_proj",
+          "new_fast_rank": 36,
+          "new_slow_rank": 30,
+          "old_slow_rank": 29,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1440085262725006e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.8.self_attn.v_proj",
+          "new_fast_rank": 40,
+          "new_slow_rank": 33,
+          "old_slow_rank": 25,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.127874587642964e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.9.self_attn.q_proj",
+          "new_fast_rank": 62,
+          "new_slow_rank": 51,
+          "old_slow_rank": 49,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1581785247803964e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.9.self_attn.v_proj",
+          "new_fast_rank": 76,
+          "new_slow_rank": 63,
+          "old_slow_rank": 67,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.987424624871892e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.10.self_attn.q_proj",
+          "new_fast_rank": 35,
+          "new_slow_rank": 29,
+          "old_slow_rank": 32,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1391818094684822e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.10.self_attn.v_proj",
+          "new_fast_rank": 42,
+          "new_slow_rank": 35,
+          "old_slow_rank": 51,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0996248295546138e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.11.self_attn.q_proj",
+          "new_fast_rank": 38,
+          "new_slow_rank": 31,
+          "old_slow_rank": 30,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1538959060762863e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.11.self_attn.v_proj",
+          "new_fast_rank": 59,
+          "new_slow_rank": 49,
+          "old_slow_rank": 61,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.191183412492137e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.12.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.939960725394485e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.12.self_attn.v_proj",
+          "new_fast_rank": 62,
+          "new_slow_rank": 51,
+          "old_slow_rank": 52,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.200019011411314e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.13.self_attn.q_proj",
+          "new_fast_rank": 34,
+          "new_slow_rank": 28,
+          "old_slow_rank": 28,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1410299311241943e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.13.self_attn.v_proj",
+          "new_fast_rank": 50,
+          "new_slow_rank": 41,
+          "old_slow_rank": 51,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.2099650109907998e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.14.self_attn.q_proj",
+          "new_fast_rank": 23,
+          "new_slow_rank": 19,
+          "old_slow_rank": 19,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0572121783857256e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.14.self_attn.v_proj",
+          "new_fast_rank": 54,
+          "new_slow_rank": 45,
+          "old_slow_rank": 51,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.152691891410541e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.15.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8642083432496293e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.15.self_attn.v_proj",
+          "new_fast_rank": 60,
+          "new_slow_rank": 50,
+          "old_slow_rank": 44,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0355646057623744e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.16.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.851829090071533e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.16.self_attn.v_proj",
+          "new_fast_rank": 39,
+          "new_slow_rank": 32,
+          "old_slow_rank": 31,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0520886323538434e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.17.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.871972266087596e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.17.self_attn.v_proj",
+          "new_fast_rank": 46,
+          "new_slow_rank": 38,
+          "old_slow_rank": 43,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.030788159856911e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.18.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8124914902273304e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.18.self_attn.v_proj",
+          "new_fast_rank": 86,
+          "new_slow_rank": 71,
+          "old_slow_rank": 73,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1337481115324408e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.19.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7769631099895378e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.19.self_attn.v_proj",
+          "new_fast_rank": 50,
+          "new_slow_rank": 41,
+          "old_slow_rank": 40,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1586579634913505e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.20.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.787408621112263e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.20.self_attn.v_proj",
+          "new_fast_rank": 51,
+          "new_slow_rank": 42,
+          "old_slow_rank": 20,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1439699793290856e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.21.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.78396444283635e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.21.self_attn.v_proj",
+          "new_fast_rank": 46,
+          "new_slow_rank": 38,
+          "old_slow_rank": 39,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.108030194847288e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.22.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.743120847663704e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.22.self_attn.v_proj",
+          "new_fast_rank": 100,
+          "new_slow_rank": 83,
+          "old_slow_rank": 77,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1411686645933514e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.23.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.731130971904804e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.23.self_attn.v_proj",
+          "new_fast_rank": 39,
+          "new_slow_rank": 32,
+          "old_slow_rank": 25,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1131604910351598e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.24.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7265941565369758e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.24.self_attn.v_proj",
+          "new_fast_rank": 69,
+          "new_slow_rank": 57,
+          "old_slow_rank": 70,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.170272672685769e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.25.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.696312068588668e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.25.self_attn.v_proj",
+          "new_fast_rank": 104,
+          "new_slow_rank": 86,
+          "old_slow_rank": 86,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0506705666889502e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.26.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.804907334701511e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.26.self_attn.v_proj",
+          "new_fast_rank": 45,
+          "new_slow_rank": 37,
+          "old_slow_rank": 27,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.144611599419477e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.27.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7218646064520726e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.27.self_attn.v_proj",
+          "new_fast_rank": 135,
+          "new_slow_rank": 112,
+          "old_slow_rank": 125,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9915308513418495e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.28.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.805339344684853e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.28.self_attn.v_proj",
+          "new_fast_rank": 26,
+          "new_slow_rank": 21,
+          "old_slow_rank": 22,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9936063466730047e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.29.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8202383600396388e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.29.self_attn.v_proj",
+          "new_fast_rank": 21,
+          "new_slow_rank": 17,
+          "old_slow_rank": 12,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9666153150410537e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.30.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9287989871941136e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.30.self_attn.v_proj",
+          "new_fast_rank": 132,
+          "new_slow_rank": 110,
+          "old_slow_rank": 109,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9973409592921598e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.31.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9636155812463585e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.31.self_attn.v_proj",
+          "new_fast_rank": 27,
+          "new_slow_rank": 22,
+          "old_slow_rank": 22,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9279376317626884e-08
+        }
+      ],
+      "consolidate_max_reconstruction_error": 2.2117792042308793e-08,
+      "consolidate_max_slow_rank": 112,
+      "consolidate_mean_fast_rank": 36.6875,
+      "consolidate_mean_reconstruction_error": 1.9916495230809517e-08,
+      "consolidate_mean_slow_rank": 29.875,
+      "consolidate_min_slow_rank": 8,
+      "consolidate_modules": 64,
+      "consolidate_rank_decreased_layers": 14,
+      "consolidate_rank_histogram": {
+        "110": 1,
+        "112": 1,
+        "17": 1,
+        "19": 1,
+        "20": 1,
+        "21": 2,
+        "22": 1,
+        "28": 1,
+        "29": 1,
+        "30": 1,
+        "31": 1,
+        "32": 2,
+        "33": 2,
+        "35": 1,
+        "37": 1,
+        "38": 2,
+        "39": 1,
+        "41": 2,
+        "42": 2,
+        "45": 2,
+        "49": 1,
+        "50": 1,
+        "51": 2,
+        "52": 1,
+        "57": 1,
+        "58": 1,
+        "63": 1,
+        "71": 1,
+        "8": 26,
+        "83": 1,
+        "86": 1
+      },
+      "consolidate_rank_increased_layers": 18,
+      "consolidate_rank_unchanged_layers": 32,
+      "stage_index": 1,
+      "task": "sst2",
+      "train_loss": 0.20219405020359446,
+      "train_steps": 200
+    },
+    {
+      "consolidate_layer_ranks": [
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.0.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.924168557820849e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.0.self_attn.v_proj",
+          "new_fast_rank": 21,
+          "new_slow_rank": 17,
+          "old_slow_rank": 20,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0854237448020285e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.1.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.922906278650771e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.1.self_attn.v_proj",
+          "new_fast_rank": 21,
+          "new_slow_rank": 17,
+          "old_slow_rank": 21,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9653931815355463e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.2.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7557399090151193e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.2.self_attn.v_proj",
+          "new_fast_rank": 60,
+          "new_slow_rank": 50,
+          "old_slow_rank": 42,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1586899379144597e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.3.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7675571228892295e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.3.self_attn.v_proj",
+          "new_fast_rank": 64,
+          "new_slow_rank": 53,
+          "old_slow_rank": 52,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1110583503514135e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.4.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8514809241310104e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.4.self_attn.v_proj",
+          "new_fast_rank": 45,
+          "new_slow_rank": 37,
+          "old_slow_rank": 33,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1359044310997888e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.5.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8483111929867846e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.5.self_attn.v_proj",
+          "new_fast_rank": 46,
+          "new_slow_rank": 38,
+          "old_slow_rank": 45,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1992995868913567e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.6.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.851292275034666e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.6.self_attn.v_proj",
+          "new_fast_rank": 48,
+          "new_slow_rank": 40,
+          "old_slow_rank": 39,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1870404154356038e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.7.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.898074764028479e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.7.self_attn.v_proj",
+          "new_fast_rank": 74,
+          "new_slow_rank": 61,
+          "old_slow_rank": 58,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1950373962908998e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.8.self_attn.q_proj",
+          "new_fast_rank": 36,
+          "new_slow_rank": 30,
+          "old_slow_rank": 30,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1423293361522155e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.8.self_attn.v_proj",
+          "new_fast_rank": 38,
+          "new_slow_rank": 31,
+          "old_slow_rank": 33,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1182458453949948e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.9.self_attn.q_proj",
+          "new_fast_rank": 56,
+          "new_slow_rank": 46,
+          "old_slow_rank": 51,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.155043432594539e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.9.self_attn.v_proj",
+          "new_fast_rank": 74,
+          "new_slow_rank": 61,
+          "old_slow_rank": 63,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9818019225681383e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.10.self_attn.q_proj",
+          "new_fast_rank": 40,
+          "new_slow_rank": 33,
+          "old_slow_rank": 29,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1574621200670663e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.10.self_attn.v_proj",
+          "new_fast_rank": 59,
+          "new_slow_rank": 49,
+          "old_slow_rank": 35,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1066451694196076e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.11.self_attn.q_proj",
+          "new_fast_rank": 38,
+          "new_slow_rank": 31,
+          "old_slow_rank": 31,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1503504754605274e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.11.self_attn.v_proj",
+          "new_fast_rank": 60,
+          "new_slow_rank": 50,
+          "old_slow_rank": 49,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1847069930913676e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.12.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9415290708479915e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.12.self_attn.v_proj",
+          "new_fast_rank": 71,
+          "new_slow_rank": 59,
+          "old_slow_rank": 51,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.2027334622976014e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.13.self_attn.q_proj",
+          "new_fast_rank": 34,
+          "new_slow_rank": 28,
+          "old_slow_rank": 28,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.140462207478322e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.13.self_attn.v_proj",
+          "new_fast_rank": 66,
+          "new_slow_rank": 55,
+          "old_slow_rank": 41,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.232912521549224e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.14.self_attn.q_proj",
+          "new_fast_rank": 24,
+          "new_slow_rank": 20,
+          "old_slow_rank": 19,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0650903209684657e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.14.self_attn.v_proj",
+          "new_fast_rank": 75,
+          "new_slow_rank": 62,
+          "old_slow_rank": 45,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1752706302891056e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.15.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.860885490145847e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.15.self_attn.v_proj",
+          "new_fast_rank": 59,
+          "new_slow_rank": 49,
+          "old_slow_rank": 50,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.023567269304749e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.16.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8520019295920065e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.16.self_attn.v_proj",
+          "new_fast_rank": 33,
+          "new_slow_rank": 27,
+          "old_slow_rank": 32,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0015534119011136e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.17.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8703850912515918e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.17.self_attn.v_proj",
+          "new_fast_rank": 56,
+          "new_slow_rank": 46,
+          "old_slow_rank": 38,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0670478662054848e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.18.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.81208932303889e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.18.self_attn.v_proj",
+          "new_fast_rank": 81,
+          "new_slow_rank": 67,
+          "old_slow_rank": 71,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1371496572442084e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.19.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7780831029767796e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.19.self_attn.v_proj",
+          "new_fast_rank": 48,
+          "new_slow_rank": 40,
+          "old_slow_rank": 41,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1637674763042014e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.20.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7885030345610176e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.20.self_attn.v_proj",
+          "new_fast_rank": 48,
+          "new_slow_rank": 40,
+          "old_slow_rank": 42,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.137716137440293e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.21.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.786636083522808e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.21.self_attn.v_proj",
+          "new_fast_rank": 48,
+          "new_slow_rank": 40,
+          "old_slow_rank": 38,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1289503493449047e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.22.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7419104381133366e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.22.self_attn.v_proj",
+          "new_fast_rank": 98,
+          "new_slow_rank": 81,
+          "old_slow_rank": 83,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1403755212645592e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.23.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7371101890262253e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.23.self_attn.v_proj",
+          "new_fast_rank": 47,
+          "new_slow_rank": 39,
+          "old_slow_rank": 32,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1424334306630044e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.24.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7268613206056216e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.24.self_attn.v_proj",
+          "new_fast_rank": 76,
+          "new_slow_rank": 63,
+          "old_slow_rank": 57,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.169754154124348e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.25.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.6995530316421537e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.25.self_attn.v_proj",
+          "new_fast_rank": 100,
+          "new_slow_rank": 83,
+          "old_slow_rank": 86,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.054880177126961e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.26.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.802783700100008e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.26.self_attn.v_proj",
+          "new_fast_rank": 35,
+          "new_slow_rank": 29,
+          "old_slow_rank": 37,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0990979621160477e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.27.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.719929088039862e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.27.self_attn.v_proj",
+          "new_fast_rank": 130,
+          "new_slow_rank": 108,
+          "old_slow_rank": 112,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.997604393011443e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.28.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8057923156789002e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.28.self_attn.v_proj",
+          "new_fast_rank": 26,
+          "new_slow_rank": 21,
+          "old_slow_rank": 21,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.991366538334205e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.29.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8227931164460642e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.29.self_attn.v_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 17,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7403532837079183e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.30.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9285385732814575e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.30.self_attn.v_proj",
+          "new_fast_rank": 134,
+          "new_slow_rank": 111,
+          "old_slow_rank": 110,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.001691612463219e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.31.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.959508644233665e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.31.self_attn.v_proj",
+          "new_fast_rank": 30,
+          "new_slow_rank": 25,
+          "old_slow_rank": 22,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9603367817921935e-08
+        }
+      ],
+      "consolidate_max_reconstruction_error": 2.232912521549224e-08,
+      "consolidate_max_slow_rank": 111,
+      "consolidate_mean_fast_rank": 37.4375,
+      "consolidate_mean_reconstruction_error": 1.988483938619723e-08,
+      "consolidate_mean_slow_rank": 30.515625,
+      "consolidate_min_slow_rank": 8,
+      "consolidate_modules": 64,
+      "consolidate_rank_decreased_layers": 16,
+      "consolidate_rank_histogram": {
+        "108": 1,
+        "111": 1,
+        "17": 2,
+        "20": 1,
+        "21": 1,
+        "25": 1,
+        "27": 1,
+        "28": 1,
+        "29": 1,
+        "30": 1,
+        "31": 2,
+        "33": 1,
+        "37": 1,
+        "38": 1,
+        "39": 1,
+        "40": 4,
+        "46": 2,
+        "49": 2,
+        "50": 2,
+        "53": 1,
+        "55": 1,
+        "59": 1,
+        "61": 2,
+        "62": 1,
+        "63": 1,
+        "67": 1,
+        "8": 27,
+        "81": 1,
+        "83": 1
+      },
+      "consolidate_rank_increased_layers": 18,
+      "consolidate_rank_unchanged_layers": 30,
+      "stage_index": 2,
+      "task": "mrpc",
+      "train_loss": 0.23293731305190704,
+      "train_steps": 200
+    },
+    {
+      "consolidate_layer_ranks": [
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.0.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.931714699310305e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.0.self_attn.v_proj",
+          "new_fast_rank": 20,
+          "new_slow_rank": 16,
+          "old_slow_rank": 17,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0742762174563723e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.1.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9221115366008235e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.1.self_attn.v_proj",
+          "new_fast_rank": 35,
+          "new_slow_rank": 29,
+          "old_slow_rank": 17,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.089254458326195e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.2.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7537040264414827e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.2.self_attn.v_proj",
+          "new_fast_rank": 57,
+          "new_slow_rank": 47,
+          "old_slow_rank": 50,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1538502537055138e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.3.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.767585366962976e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.3.self_attn.v_proj",
+          "new_fast_rank": 77,
+          "new_slow_rank": 64,
+          "old_slow_rank": 53,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1343977252286095e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.4.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.845581820703046e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.4.self_attn.v_proj",
+          "new_fast_rank": 47,
+          "new_slow_rank": 39,
+          "old_slow_rank": 37,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.13770743329178e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.5.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8506964849507312e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.5.self_attn.v_proj",
+          "new_fast_rank": 42,
+          "new_slow_rank": 35,
+          "old_slow_rank": 38,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1842208042244238e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.6.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8533494738903755e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.6.self_attn.v_proj",
+          "new_fast_rank": 42,
+          "new_slow_rank": 35,
+          "old_slow_rank": 40,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1557255536208686e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.7.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.896730417172421e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.7.self_attn.v_proj",
+          "new_fast_rank": 60,
+          "new_slow_rank": 50,
+          "old_slow_rank": 61,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1948014961026274e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.8.self_attn.q_proj",
+          "new_fast_rank": 32,
+          "new_slow_rank": 26,
+          "old_slow_rank": 30,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1223929280722587e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.8.self_attn.v_proj",
+          "new_fast_rank": 39,
+          "new_slow_rank": 32,
+          "old_slow_rank": 31,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1257704929666943e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.9.self_attn.q_proj",
+          "new_fast_rank": 58,
+          "new_slow_rank": 48,
+          "old_slow_rank": 46,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1586579634913505e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.9.self_attn.v_proj",
+          "new_fast_rank": 72,
+          "new_slow_rank": 60,
+          "old_slow_rank": 61,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9800811656978112e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.10.self_attn.q_proj",
+          "new_fast_rank": 40,
+          "new_slow_rank": 33,
+          "old_slow_rank": 33,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1588178356068966e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.10.self_attn.v_proj",
+          "new_fast_rank": 45,
+          "new_slow_rank": 37,
+          "old_slow_rank": 49,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1000916561320082e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.11.self_attn.q_proj",
+          "new_fast_rank": 36,
+          "new_slow_rank": 30,
+          "old_slow_rank": 31,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1519289461480184e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.11.self_attn.v_proj",
+          "new_fast_rank": 63,
+          "new_slow_rank": 52,
+          "old_slow_rank": 50,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1870420141567593e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.12.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9413807450519016e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.12.self_attn.v_proj",
+          "new_fast_rank": 65,
+          "new_slow_rank": 54,
+          "old_slow_rank": 59,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1976347852614708e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.13.self_attn.q_proj",
+          "new_fast_rank": 34,
+          "new_slow_rank": 28,
+          "old_slow_rank": 28,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.138296650855409e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.13.self_attn.v_proj",
+          "new_fast_rank": 56,
+          "new_slow_rank": 46,
+          "old_slow_rank": 55,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.2147126799154648e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.14.self_attn.q_proj",
+          "new_fast_rank": 22,
+          "new_slow_rank": 18,
+          "old_slow_rank": 20,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0493697405754574e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.14.self_attn.v_proj",
+          "new_fast_rank": 53,
+          "new_slow_rank": 44,
+          "old_slow_rank": 62,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.155184830598955e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.15.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8619539687847464e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.15.self_attn.v_proj",
+          "new_fast_rank": 62,
+          "new_slow_rank": 51,
+          "old_slow_rank": 49,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0401609290843226e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.16.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8523900635614154e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.16.self_attn.v_proj",
+          "new_fast_rank": 28,
+          "new_slow_rank": 23,
+          "old_slow_rank": 27,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9490425273716028e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.17.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.868941801319579e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.17.self_attn.v_proj",
+          "new_fast_rank": 57,
+          "new_slow_rank": 47,
+          "old_slow_rank": 46,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0710769987886124e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.18.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8096764975439328e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.18.self_attn.v_proj",
+          "new_fast_rank": 88,
+          "new_slow_rank": 73,
+          "old_slow_rank": 67,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1346410861156073e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.19.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.776666280761674e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.19.self_attn.v_proj",
+          "new_fast_rank": 48,
+          "new_slow_rank": 40,
+          "old_slow_rank": 40,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1643149494821046e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.20.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7863762025172036e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.20.self_attn.v_proj",
+          "new_fast_rank": 38,
+          "new_slow_rank": 31,
+          "old_slow_rank": 40,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.098552442930668e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.21.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7835571242130754e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.21.self_attn.v_proj",
+          "new_fast_rank": 45,
+          "new_slow_rank": 37,
+          "old_slow_rank": 40,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1046851372830133e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.22.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.744406397108378e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.22.self_attn.v_proj",
+          "new_fast_rank": 108,
+          "new_slow_rank": 90,
+          "old_slow_rank": 81,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1392377647089234e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.23.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.732816734545395e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.23.self_attn.v_proj",
+          "new_fast_rank": 34,
+          "new_slow_rank": 28,
+          "old_slow_rank": 39,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0933340394435618e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.24.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7236720495361624e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.24.self_attn.v_proj",
+          "new_fast_rank": 87,
+          "new_slow_rank": 72,
+          "old_slow_rank": 63,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1761925594887543e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.25.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.6966664517781282e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.25.self_attn.v_proj",
+          "new_fast_rank": 105,
+          "new_slow_rank": 87,
+          "old_slow_rank": 83,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0553025947833703e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.26.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.806657401459688e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.26.self_attn.v_proj",
+          "new_fast_rank": 41,
+          "new_slow_rank": 34,
+          "old_slow_rank": 29,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.136454213541583e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.27.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.722722409169819e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.27.self_attn.v_proj",
+          "new_fast_rank": 146,
+          "new_slow_rank": 121,
+          "old_slow_rank": 108,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9933413142325662e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.28.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8045822613999007e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.28.self_attn.v_proj",
+          "new_fast_rank": 30,
+          "new_slow_rank": 25,
+          "old_slow_rank": 21,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0488982954702806e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.29.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.820779615968604e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.29.self_attn.v_proj",
+          "new_fast_rank": 13,
+          "new_slow_rank": 10,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8074166163728478e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.30.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9309853271920474e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.30.self_attn.v_proj",
+          "new_fast_rank": 131,
+          "new_slow_rank": 109,
+          "old_slow_rank": 111,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0019149005179315e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.31.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.963128681836679e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.31.self_attn.v_proj",
+          "new_fast_rank": 28,
+          "new_slow_rank": 23,
+          "old_slow_rank": 25,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9433635145560402e-08
+        }
+      ],
+      "consolidate_max_reconstruction_error": 2.2147126799154648e-08,
+      "consolidate_max_slow_rank": 121,
+      "consolidate_mean_fast_rank": 37.03125,
+      "consolidate_mean_reconstruction_error": 1.9886090524279254e-08,
+      "consolidate_mean_slow_rank": 30.1875,
+      "consolidate_min_slow_rank": 8,
+      "consolidate_modules": 64,
+      "consolidate_rank_decreased_layers": 19,
+      "consolidate_rank_histogram": {
+        "10": 1,
+        "109": 1,
+        "121": 1,
+        "16": 1,
+        "18": 1,
+        "23": 2,
+        "25": 1,
+        "26": 1,
+        "28": 2,
+        "29": 1,
+        "30": 1,
+        "31": 1,
+        "32": 1,
+        "33": 1,
+        "34": 1,
+        "35": 2,
+        "37": 2,
+        "39": 1,
+        "40": 1,
+        "44": 1,
+        "46": 1,
+        "47": 2,
+        "48": 1,
+        "50": 1,
+        "51": 1,
+        "52": 1,
+        "54": 1,
+        "60": 1,
+        "64": 1,
+        "72": 1,
+        "73": 1,
+        "8": 26,
+        "87": 1,
+        "90": 1
+      },
+      "consolidate_rank_increased_layers": 16,
+      "consolidate_rank_unchanged_layers": 29,
+      "stage_index": 3,
+      "task": "qnli",
+      "train_loss": 0.1543911045135087,
+      "train_steps": 200
+    },
+    {
+      "consolidate_layer_ranks": [
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.0.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.928705550824361e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.0.self_attn.v_proj",
+          "new_fast_rank": 21,
+          "new_slow_rank": 17,
+          "old_slow_rank": 16,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.090249751063311e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.1.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9248387772563547e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.1.self_attn.v_proj",
+          "new_fast_rank": 27,
+          "new_slow_rank": 22,
+          "old_slow_rank": 29,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.024506784437108e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.2.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7538328123123392e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.2.self_attn.v_proj",
+          "new_fast_rank": 48,
+          "new_slow_rank": 40,
+          "old_slow_rank": 47,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1270023964348184e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.3.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.767458002177591e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.3.self_attn.v_proj",
+          "new_fast_rank": 58,
+          "new_slow_rank": 48,
+          "old_slow_rank": 64,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.085564787535077e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.4.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8456367101293836e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.4.self_attn.v_proj",
+          "new_fast_rank": 45,
+          "new_slow_rank": 37,
+          "old_slow_rank": 39,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1264042970869923e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.5.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8477271268579898e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.5.self_attn.v_proj",
+          "new_fast_rank": 45,
+          "new_slow_rank": 37,
+          "old_slow_rank": 35,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.186349412625077e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.6.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8479562768902724e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.6.self_attn.v_proj",
+          "new_fast_rank": 50,
+          "new_slow_rank": 41,
+          "old_slow_rank": 35,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1869254851480946e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.7.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8981650029559205e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.7.self_attn.v_proj",
+          "new_fast_rank": 65,
+          "new_slow_rank": 54,
+          "old_slow_rank": 50,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.2024723378422095e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.8.self_attn.q_proj",
+          "new_fast_rank": 32,
+          "new_slow_rank": 26,
+          "old_slow_rank": 26,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1232441582696993e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.8.self_attn.v_proj",
+          "new_fast_rank": 36,
+          "new_slow_rank": 30,
+          "old_slow_rank": 32,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1158454543979133e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.9.self_attn.q_proj",
+          "new_fast_rank": 44,
+          "new_slow_rank": 36,
+          "old_slow_rank": 48,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1518649973018e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.9.self_attn.v_proj",
+          "new_fast_rank": 74,
+          "new_slow_rank": 61,
+          "old_slow_rank": 60,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9885987967427354e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.10.self_attn.q_proj",
+          "new_fast_rank": 40,
+          "new_slow_rank": 33,
+          "old_slow_rank": 33,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1560456531233285e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.10.self_attn.v_proj",
+          "new_fast_rank": 46,
+          "new_slow_rank": 38,
+          "old_slow_rank": 37,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.097607065820739e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.11.self_attn.q_proj",
+          "new_fast_rank": 42,
+          "new_slow_rank": 35,
+          "old_slow_rank": 30,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.171048940624587e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.11.self_attn.v_proj",
+          "new_fast_rank": 64,
+          "new_slow_rank": 53,
+          "old_slow_rank": 52,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1853029608109864e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.12.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9398530781700174e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.12.self_attn.v_proj",
+          "new_fast_rank": 75,
+          "new_slow_rank": 62,
+          "old_slow_rank": 54,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.204200200139894e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.13.self_attn.q_proj",
+          "new_fast_rank": 34,
+          "new_slow_rank": 28,
+          "old_slow_rank": 28,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1419001683398164e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.13.self_attn.v_proj",
+          "new_fast_rank": 64,
+          "new_slow_rank": 53,
+          "old_slow_rank": 46,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.227874595917001e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.14.self_attn.q_proj",
+          "new_fast_rank": 23,
+          "new_slow_rank": 19,
+          "old_slow_rank": 18,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0578879045274334e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.14.self_attn.v_proj",
+          "new_fast_rank": 63,
+          "new_slow_rank": 52,
+          "old_slow_rank": 44,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1665934824000033e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.15.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8603447671239337e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.15.self_attn.v_proj",
+          "new_fast_rank": 58,
+          "new_slow_rank": 48,
+          "old_slow_rank": 51,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.017993772085447e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.16.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.849542563547857e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.16.self_attn.v_proj",
+          "new_fast_rank": 35,
+          "new_slow_rank": 29,
+          "old_slow_rank": 23,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0184598881201055e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.17.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8738788298833242e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.17.self_attn.v_proj",
+          "new_fast_rank": 51,
+          "new_slow_rank": 42,
+          "old_slow_rank": 47,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0528228006355675e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.18.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8096917742127516e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.18.self_attn.v_proj",
+          "new_fast_rank": 76,
+          "new_slow_rank": 63,
+          "old_slow_rank": 73,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1221621793188206e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.19.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7749284708656887e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.19.self_attn.v_proj",
+          "new_fast_rank": 54,
+          "new_slow_rank": 45,
+          "old_slow_rank": 40,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1675100825291338e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.20.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.794393256204785e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.20.self_attn.v_proj",
+          "new_fast_rank": 30,
+          "new_slow_rank": 25,
+          "old_slow_rank": 31,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0465904526645318e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.21.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7837498589301504e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.21.self_attn.v_proj",
+          "new_fast_rank": 52,
+          "new_slow_rank": 43,
+          "old_slow_rank": 37,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.128288834057912e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.22.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7440905608623325e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.22.self_attn.v_proj",
+          "new_fast_rank": 94,
+          "new_slow_rank": 78,
+          "old_slow_rank": 90,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1393624649590492e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.23.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7351636572016105e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.23.self_attn.v_proj",
+          "new_fast_rank": 32,
+          "new_slow_rank": 26,
+          "old_slow_rank": 28,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.075834615311578e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.24.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7286586384557268e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.24.self_attn.v_proj",
+          "new_fast_rank": 110,
+          "new_slow_rank": 91,
+          "old_slow_rank": 72,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1631478830386186e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.25.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.692408169162718e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.25.self_attn.v_proj",
+          "new_fast_rank": 99,
+          "new_slow_rank": 82,
+          "old_slow_rank": 87,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0531849997951213e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.26.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8076255159371613e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.26.self_attn.v_proj",
+          "new_fast_rank": 40,
+          "new_slow_rank": 33,
+          "old_slow_rank": 34,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1173159225895688e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.27.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7191881696021483e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.27.self_attn.v_proj",
+          "new_fast_rank": 143,
+          "new_slow_rank": 119,
+          "old_slow_rank": 121,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.99539194056797e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.28.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8034347348816482e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.28.self_attn.v_proj",
+          "new_fast_rank": 27,
+          "new_slow_rank": 22,
+          "old_slow_rank": 25,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.016301792195918e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.29.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8216955055549988e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.29.self_attn.v_proj",
+          "new_fast_rank": 16,
+          "new_slow_rank": 13,
+          "old_slow_rank": 10,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8854759531450327e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.30.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9327659472878622e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.30.self_attn.v_proj",
+          "new_fast_rank": 134,
+          "new_slow_rank": 111,
+          "old_slow_rank": 109,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0005348488894015e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.31.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9625547409418687e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.31.self_attn.v_proj",
+          "new_fast_rank": 23,
+          "new_slow_rank": 19,
+          "old_slow_rank": 23,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8931840983782422e-08
+        }
+      ],
+      "consolidate_max_reconstruction_error": 2.227874595917001e-08,
+      "consolidate_max_slow_rank": 119,
+      "consolidate_mean_fast_rank": 36.8125,
+      "consolidate_mean_reconstruction_error": 1.98686469776721e-08,
+      "consolidate_mean_slow_rank": 29.984375,
+      "consolidate_min_slow_rank": 8,
+      "consolidate_modules": 64,
+      "consolidate_rank_decreased_layers": 17,
+      "consolidate_rank_histogram": {
+        "111": 1,
+        "119": 1,
+        "13": 1,
+        "17": 1,
+        "19": 2,
+        "22": 2,
+        "25": 1,
+        "26": 2,
+        "28": 1,
+        "29": 1,
+        "30": 1,
+        "33": 2,
+        "35": 1,
+        "36": 1,
+        "37": 2,
+        "38": 1,
+        "40": 1,
+        "41": 1,
+        "42": 1,
+        "43": 1,
+        "45": 1,
+        "48": 2,
+        "52": 1,
+        "53": 2,
+        "54": 1,
+        "61": 1,
+        "62": 1,
+        "63": 1,
+        "78": 1,
+        "8": 26,
+        "82": 1,
+        "91": 1
+      },
+      "consolidate_rank_increased_layers": 18,
+      "consolidate_rank_unchanged_layers": 29,
+      "stage_index": 4,
+      "task": "rte",
+      "train_loss": 0.12442628188159233,
+      "train_steps": 200
+    },
+    {
+      "consolidate_layer_ranks": [
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.0.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.925337933528226e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.0.self_attn.v_proj",
+          "new_fast_rank": 22,
+          "new_slow_rank": 18,
+          "old_slow_rank": 17,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0997653393806104e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.1.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.923235082301744e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.1.self_attn.v_proj",
+          "new_fast_rank": 34,
+          "new_slow_rank": 28,
+          "old_slow_rank": 22,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0879388884509353e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.2.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.75423906512151e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.2.self_attn.v_proj",
+          "new_fast_rank": 57,
+          "new_slow_rank": 47,
+          "old_slow_rank": 40,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.14930011566139e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.3.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7683481345898144e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.3.self_attn.v_proj",
+          "new_fast_rank": 65,
+          "new_slow_rank": 54,
+          "old_slow_rank": 48,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.108273200462918e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.4.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.846040831310347e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.4.self_attn.v_proj",
+          "new_fast_rank": 45,
+          "new_slow_rank": 37,
+          "old_slow_rank": 37,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1271254979637888e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.5.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8445996730065417e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.5.self_attn.v_proj",
+          "new_fast_rank": 45,
+          "new_slow_rank": 37,
+          "old_slow_rank": 37,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.184951775063837e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.6.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8521678413208065e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.6.self_attn.v_proj",
+          "new_fast_rank": 45,
+          "new_slow_rank": 37,
+          "old_slow_rank": 41,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1739179345559023e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.7.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9015599761473823e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.7.self_attn.v_proj",
+          "new_fast_rank": 57,
+          "new_slow_rank": 47,
+          "old_slow_rank": 54,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1880223854964242e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.8.self_attn.q_proj",
+          "new_fast_rank": 35,
+          "new_slow_rank": 29,
+          "old_slow_rank": 26,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.134660270769473e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.8.self_attn.v_proj",
+          "new_fast_rank": 35,
+          "new_slow_rank": 29,
+          "old_slow_rank": 30,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1072429134960657e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.9.self_attn.q_proj",
+          "new_fast_rank": 56,
+          "new_slow_rank": 46,
+          "old_slow_rank": 36,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.156198242175833e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.9.self_attn.v_proj",
+          "new_fast_rank": 82,
+          "new_slow_rank": 68,
+          "old_slow_rank": 61,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9830268982445887e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.10.self_attn.q_proj",
+          "new_fast_rank": 40,
+          "new_slow_rank": 33,
+          "old_slow_rank": 33,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1584749987368923e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.10.self_attn.v_proj",
+          "new_fast_rank": 45,
+          "new_slow_rank": 37,
+          "old_slow_rank": 38,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0915187803893787e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.11.self_attn.q_proj",
+          "new_fast_rank": 38,
+          "new_slow_rank": 31,
+          "old_slow_rank": 35,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1551425533061774e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.11.self_attn.v_proj",
+          "new_fast_rank": 60,
+          "new_slow_rank": 50,
+          "old_slow_rank": 53,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1842899045054764e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.12.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9442659038304555e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.12.self_attn.v_proj",
+          "new_fast_rank": 71,
+          "new_slow_rank": 59,
+          "old_slow_rank": 62,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.20428386654703e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.13.self_attn.q_proj",
+          "new_fast_rank": 34,
+          "new_slow_rank": 28,
+          "old_slow_rank": 28,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1376697745267847e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.13.self_attn.v_proj",
+          "new_fast_rank": 60,
+          "new_slow_rank": 50,
+          "old_slow_rank": 53,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.2270727484396957e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.14.self_attn.q_proj",
+          "new_fast_rank": 22,
+          "new_slow_rank": 18,
+          "old_slow_rank": 19,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0490970698006095e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.14.self_attn.v_proj",
+          "new_fast_rank": 75,
+          "new_slow_rank": 62,
+          "old_slow_rank": 52,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1827235130444933e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.15.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.858558107414865e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.15.self_attn.v_proj",
+          "new_fast_rank": 57,
+          "new_slow_rank": 47,
+          "old_slow_rank": 48,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.019054079482885e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.16.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8529494383301426e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.16.self_attn.v_proj",
+          "new_fast_rank": 33,
+          "new_slow_rank": 27,
+          "old_slow_rank": 29,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0068842587761537e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.17.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8709254590021374e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.17.self_attn.v_proj",
+          "new_fast_rank": 51,
+          "new_slow_rank": 42,
+          "old_slow_rank": 42,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0540555922821113e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.18.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8104385546280355e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.18.self_attn.v_proj",
+          "new_fast_rank": 87,
+          "new_slow_rank": 72,
+          "old_slow_rank": 63,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1350841095113537e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.19.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7763126081149494e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.19.self_attn.v_proj",
+          "new_fast_rank": 52,
+          "new_slow_rank": 43,
+          "old_slow_rank": 45,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.167363888361251e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.20.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7859022705124517e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.20.self_attn.v_proj",
+          "new_fast_rank": 27,
+          "new_slow_rank": 22,
+          "old_slow_rank": 25,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0299131264778225e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.21.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.782761849256076e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.21.self_attn.v_proj",
+          "new_fast_rank": 44,
+          "new_slow_rank": 36,
+          "old_slow_rank": 43,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1029748609180388e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.22.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7483875680568417e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.22.self_attn.v_proj",
+          "new_fast_rank": 111,
+          "new_slow_rank": 92,
+          "old_slow_rank": 78,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1378118830739368e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.23.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7401651675186258e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.23.self_attn.v_proj",
+          "new_fast_rank": 28,
+          "new_slow_rank": 23,
+          "old_slow_rank": 26,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0555505741981506e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.24.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7294437881787417e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.24.self_attn.v_proj",
+          "new_fast_rank": 64,
+          "new_slow_rank": 53,
+          "old_slow_rank": 91,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1627393209655565e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.25.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.69594471799428e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.25.self_attn.v_proj",
+          "new_fast_rank": 118,
+          "new_slow_rank": 98,
+          "old_slow_rank": 82,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0634701058952487e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.26.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8054626238495075e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.26.self_attn.v_proj",
+          "new_fast_rank": 45,
+          "new_slow_rank": 37,
+          "old_slow_rank": 33,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.142650501468779e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.27.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7203992896952514e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.27.self_attn.v_proj",
+          "new_fast_rank": 138,
+          "new_slow_rank": 115,
+          "old_slow_rank": 119,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9938559248089405e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.28.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.803251947762874e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.28.self_attn.v_proj",
+          "new_fast_rank": 26,
+          "new_slow_rank": 21,
+          "old_slow_rank": 22,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9933134254301876e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.29.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.82034121110064e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.29.self_attn.v_proj",
+          "new_fast_rank": 18,
+          "new_slow_rank": 15,
+          "old_slow_rank": 13,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9343975310448513e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.30.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9304867038272278e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.30.self_attn.v_proj",
+          "new_fast_rank": 128,
+          "new_slow_rank": 106,
+          "old_slow_rank": 111,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.994935061588876e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.31.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9585385757636686e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.31.self_attn.v_proj",
+          "new_fast_rank": 27,
+          "new_slow_rank": 22,
+          "old_slow_rank": 19,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9292697217565546e-08
+        }
+      ],
+      "consolidate_max_reconstruction_error": 2.2270727484396957e-08,
+      "consolidate_max_slow_rank": 115,
+      "consolidate_mean_fast_rank": 36.921875,
+      "consolidate_mean_reconstruction_error": 1.988501327487846e-08,
+      "consolidate_mean_slow_rank": 30.0625,
+      "consolidate_min_slow_rank": 8,
+      "consolidate_modules": 64,
+      "consolidate_rank_decreased_layers": 19,
+      "consolidate_rank_histogram": {
+        "106": 1,
+        "115": 1,
+        "15": 1,
+        "18": 2,
+        "21": 1,
+        "22": 2,
+        "23": 1,
+        "27": 1,
+        "28": 2,
+        "29": 2,
+        "31": 1,
+        "33": 1,
+        "36": 1,
+        "37": 5,
+        "42": 1,
+        "43": 1,
+        "46": 1,
+        "47": 3,
+        "50": 2,
+        "53": 1,
+        "54": 1,
+        "59": 1,
+        "62": 1,
+        "68": 1,
+        "72": 1,
+        "8": 26,
+        "92": 1,
+        "98": 1
+      },
+      "consolidate_rank_increased_layers": 14,
+      "consolidate_rank_unchanged_layers": 31,
+      "stage_index": 5,
+      "task": "qqp",
+      "train_loss": 0.29390607219120285,
+      "train_steps": 200
+    },
+    {
+      "consolidate_layer_ranks": [
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.0.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9273590723400957e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.0.self_attn.v_proj",
+          "new_fast_rank": 22,
+          "new_slow_rank": 18,
+          "old_slow_rank": 18,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0960120750146416e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.1.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9210663282365203e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.1.self_attn.v_proj",
+          "new_fast_rank": 26,
+          "new_slow_rank": 21,
+          "old_slow_rank": 28,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0172242543026186e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.2.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.755151224358542e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.2.self_attn.v_proj",
+          "new_fast_rank": 56,
+          "new_slow_rank": 46,
+          "old_slow_rank": 47,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1442122744019798e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.3.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7650505057531518e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.3.self_attn.v_proj",
+          "new_fast_rank": 63,
+          "new_slow_rank": 52,
+          "old_slow_rank": 54,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1016642648419293e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.4.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8461262740743223e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.4.self_attn.v_proj",
+          "new_fast_rank": 45,
+          "new_slow_rank": 37,
+          "old_slow_rank": 37,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1346348688666694e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.5.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.846862041077202e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.5.self_attn.v_proj",
+          "new_fast_rank": 44,
+          "new_slow_rank": 36,
+          "old_slow_rank": 37,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.194616399719962e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.6.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8500232457085986e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.6.self_attn.v_proj",
+          "new_fast_rank": 51,
+          "new_slow_rank": 42,
+          "old_slow_rank": 37,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.18984137489997e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.7.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8974871451860054e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.7.self_attn.v_proj",
+          "new_fast_rank": 56,
+          "new_slow_rank": 46,
+          "old_slow_rank": 47,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1917715642416624e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.8.self_attn.q_proj",
+          "new_fast_rank": 35,
+          "new_slow_rank": 29,
+          "old_slow_rank": 29,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1360026636330076e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.8.self_attn.v_proj",
+          "new_fast_rank": 39,
+          "new_slow_rank": 32,
+          "old_slow_rank": 29,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1286512108531497e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.9.self_attn.q_proj",
+          "new_fast_rank": 59,
+          "new_slow_rank": 49,
+          "old_slow_rank": 46,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1549938722387196e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.9.self_attn.v_proj",
+          "new_fast_rank": 72,
+          "new_slow_rank": 60,
+          "old_slow_rank": 68,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9769254677726167e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.10.self_attn.q_proj",
+          "new_fast_rank": 41,
+          "new_slow_rank": 34,
+          "old_slow_rank": 33,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1629727342542537e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.10.self_attn.v_proj",
+          "new_fast_rank": 63,
+          "new_slow_rank": 52,
+          "old_slow_rank": 37,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1067101840799296e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.11.self_attn.q_proj",
+          "new_fast_rank": 36,
+          "new_slow_rank": 30,
+          "old_slow_rank": 31,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1520030202282214e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.11.self_attn.v_proj",
+          "new_fast_rank": 65,
+          "new_slow_rank": 54,
+          "old_slow_rank": 50,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1957617946100072e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.12.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9394022388041776e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.12.self_attn.v_proj",
+          "new_fast_rank": 69,
+          "new_slow_rank": 57,
+          "old_slow_rank": 59,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.2028599389045667e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.13.self_attn.q_proj",
+          "new_fast_rank": 40,
+          "new_slow_rank": 33,
+          "old_slow_rank": 28,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.154400391418676e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.13.self_attn.v_proj",
+          "new_fast_rank": 66,
+          "new_slow_rank": 55,
+          "old_slow_rank": 50,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.2321668069480438e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.14.self_attn.q_proj",
+          "new_fast_rank": 24,
+          "new_slow_rank": 20,
+          "old_slow_rank": 18,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0615928519873705e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.14.self_attn.v_proj",
+          "new_fast_rank": 59,
+          "new_slow_rank": 49,
+          "old_slow_rank": 62,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1652518000792043e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.15.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8582552385737472e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.15.self_attn.v_proj",
+          "new_fast_rank": 56,
+          "new_slow_rank": 46,
+          "old_slow_rank": 47,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0114791610126304e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.16.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8492706033157447e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.16.self_attn.v_proj",
+          "new_fast_rank": 35,
+          "new_slow_rank": 29,
+          "old_slow_rank": 27,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0196676331352137e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.17.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8683698144172922e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.17.self_attn.v_proj",
+          "new_fast_rank": 48,
+          "new_slow_rank": 40,
+          "old_slow_rank": 42,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0485813934101316e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.18.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8115590805223292e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.18.self_attn.v_proj",
+          "new_fast_rank": 82,
+          "new_slow_rank": 68,
+          "old_slow_rank": 72,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1336877153999012e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.19.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.775176272644785e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.19.self_attn.v_proj",
+          "new_fast_rank": 57,
+          "new_slow_rank": 47,
+          "old_slow_rank": 43,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1758808088634396e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.20.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7887726855292385e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.20.self_attn.v_proj",
+          "new_fast_rank": 33,
+          "new_slow_rank": 27,
+          "old_slow_rank": 22,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0761001806590684e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.21.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.784968617357663e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.21.self_attn.v_proj",
+          "new_fast_rank": 46,
+          "new_slow_rank": 38,
+          "old_slow_rank": 36,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1070515998644623e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.22.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7434391708093244e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.22.self_attn.v_proj",
+          "new_fast_rank": 111,
+          "new_slow_rank": 92,
+          "old_slow_rank": 92,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1379461756509954e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.23.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7317047351639303e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.23.self_attn.v_proj",
+          "new_fast_rank": 42,
+          "new_slow_rank": 35,
+          "old_slow_rank": 23,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1248277803920246e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.24.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.7275491259738374e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.24.self_attn.v_proj",
+          "new_fast_rank": 94,
+          "new_slow_rank": 78,
+          "old_slow_rank": 53,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.174946978072967e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.25.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.695043749805336e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.25.self_attn.v_proj",
+          "new_fast_rank": 95,
+          "new_slow_rank": 79,
+          "old_slow_rank": 98,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0589483895605554e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.26.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8049059136160395e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.26.self_attn.v_proj",
+          "new_fast_rank": 39,
+          "new_slow_rank": 32,
+          "old_slow_rank": 37,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.1223133472858535e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.27.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.723261533470577e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.27.self_attn.v_proj",
+          "new_fast_rank": 146,
+          "new_slow_rank": 121,
+          "old_slow_rank": 115,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.994716036790578e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.28.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.801729609951508e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.28.self_attn.v_proj",
+          "new_fast_rank": 29,
+          "new_slow_rank": 24,
+          "old_slow_rank": 21,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 2.0367791009334724e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.29.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8198276663383695e-08
+        },
+        {
+          "direction": "decreased",
+          "layer": "model.layers.29.self_attn.v_proj",
+          "new_fast_rank": 15,
+          "new_slow_rank": 12,
+          "old_slow_rank": 15,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.8740115237392274e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.30.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9302596854231524e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.30.self_attn.v_proj",
+          "new_fast_rank": 132,
+          "new_slow_rank": 110,
+          "old_slow_rank": 106,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9918807936392113e-08
+        },
+        {
+          "direction": "unchanged",
+          "layer": "model.layers.31.self_attn.q_proj",
+          "new_fast_rank": 11,
+          "new_slow_rank": 8,
+          "old_slow_rank": 8,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9630283176752528e-08
+        },
+        {
+          "direction": "increased",
+          "layer": "model.layers.31.self_attn.v_proj",
+          "new_fast_rank": 28,
+          "new_slow_rank": 23,
+          "old_slow_rank": 22,
+          "rank_svd_cap": 256,
+          "reconstruction_error": 1.9362808245659835e-08
+        }
+      ],
+      "consolidate_max_reconstruction_error": 2.2321668069480438e-08,
+      "consolidate_max_slow_rank": 121,
+      "consolidate_mean_fast_rank": 37.578125,
+      "consolidate_mean_reconstruction_error": 1.9898596742562447e-08,
+      "consolidate_mean_slow_rank": 30.640625,
+      "consolidate_min_slow_rank": 8,
+      "consolidate_modules": 64,
+      "consolidate_rank_decreased_layers": 15,
+      "consolidate_rank_histogram": {
+        "110": 1,
+        "12": 1,
+        "121": 1,
+        "18": 1,
+        "20": 1,
+        "21": 1,
+        "23": 1,
+        "24": 1,
+        "27": 1,
+        "29": 2,
+        "30": 1,
+        "32": 2,
+        "33": 1,
+        "34": 1,
+        "35": 1,
+        "36": 1,
+        "37": 1,
+        "38": 1,
+        "40": 1,
+        "42": 1,
+        "46": 3,
+        "47": 1,
+        "49": 2,
+        "52": 2,
+        "54": 1,
+        "55": 1,
+        "57": 1,
+        "60": 1,
+        "68": 1,
+        "78": 1,
+        "79": 1,
+        "8": 26,
+        "92": 1
+      },
+      "consolidate_rank_increased_layers": 19,
+      "consolidate_rank_unchanged_layers": 30,
+      "stage_index": 6,
+      "task": "mnli",
+      "train_loss": 0.4096379160718584,
+      "train_steps": 200
+    }
+  ]
+}

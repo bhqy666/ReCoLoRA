@@ -1,0 +1,26 @@
+{
+  "average_final_score": 0.7445189096047038,
+  "average_forgetting": 0.0967125382262997,
+  "per_task": {
+    "mrpc": {
+      "best_score": 0.8134110787172011,
+      "final_score": 0.8134110787172011,
+      "forgetting": 0.0
+    },
+    "qnli": {
+      "best_score": 0.9110378912685337,
+      "final_score": 0.9110378912685337,
+      "forgetting": 0.0
+    },
+    "rte": {
+      "best_score": 0.6137184115523465,
+      "final_score": 0.6137184115523465,
+      "forgetting": 0.0
+    },
+    "sst2": {
+      "best_score": 0.930045871559633,
+      "final_score": 0.6399082568807339,
+      "forgetting": 0.2901376146788991
+    }
+  }
+}

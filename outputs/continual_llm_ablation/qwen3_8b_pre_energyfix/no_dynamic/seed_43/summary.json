@@ -1,0 +1,36 @@
+{
+  "average_final_score": 0.8793414239618703,
+  "average_forgetting": 0.025101338679675567,
+  "per_task": {
+    "mnli": {
+      "best_score": 0.881,
+      "final_score": 0.881,
+      "forgetting": 0.0
+    },
+    "mrpc": {
+      "best_score": 0.9194991055456172,
+      "final_score": 0.8388349514563107,
+      "forgetting": 0.0806641540893065
+    },
+    "qnli": {
+      "best_score": 0.904,
+      "final_score": 0.889,
+      "forgetting": 0.015000000000000013
+    },
+    "qqp": {
+      "best_score": 0.8044692737430168,
+      "final_score": 0.7959479015918959,
+      "forgetting": 0.00852137215112092
+    },
+    "rte": {
+      "best_score": 0.9350180505415162,
+      "final_score": 0.9205776173285198,
+      "forgetting": 0.014440433212996373
+    },
+    "sst2": {
+      "best_score": 0.9575688073394495,
+      "final_score": 0.9506880733944955,
+      "forgetting": 0.006880733944954032
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "average_final_score": 1.0,
+  "average_forgetting": 0.0,
+  "per_task": {
+    "sst2": {
+      "best_score": 1.0,
+      "final_score": 1.0,
+      "forgetting": 0.0
+    }
+  }
+}

@@ -1,0 +1,10 @@
+numpy<2
+torch>=2.1,<2.2
+transformers==4.41.1
+datasets==3.1.0
+evaluate==0.4.6
+peft==0.10.0
+accelerate>=0.21
+sentencepiece
+protobuf
+bitsandbytes>=0.43; platform_system == "Linux"
