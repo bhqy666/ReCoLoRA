@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Remaining O-LoRA comparison experiments, run sequentially and detached.
-#   1) Mistral-7B-v0.3: HiLoRA + O-LoRA (3 seeds each); LoRA single-adapter baseline already exists.
+#   1) Mistral-7B-v0.3: ReCoLoRA + O-LoRA (3 seeds each); LoRA single-adapter baseline already exists.
 #   2) Qwen3-8B: O-LoRA r=16 (3 seeds) capacity-fairness variant.
 # All use the exact continual-GLUE protocol (200 steps/task, lr 2e-4, q/v, fp16, forward order)
-# matching the existing HiLoRA/LoRA seed runs.
+# matching the existing ReCoLoRA/LoRA seed runs.
 set -u
 cd /home/bhqy/Documents/project/HiLoRA
 PY=/home/bhqy/anaconda3/envs/open_manus/bin/python
@@ -24,9 +24,9 @@ run() {  # run <tag> <model> <outdir> <seed> <extra-args...>
   echo "===== ${tag} seed ${seed} DONE $(date +%F_%H:%M:%S) exit=$? ====="
 }
 
-# ---- 1) Mistral-7B HiLoRA (canonical static two-stage, defaults match Qwen canonical) ----
+# ---- 1) Mistral-7B ReCoLoRA (canonical static two-stage, defaults match Qwen canonical) ----
 for S in 42 43 44; do
-  run "Mistral-HiLoRA" "$MISTRAL" outputs/continual_llm/hilora/mistral_7b_v03/seed_$S $S \
+  run "Mistral-ReCoLoRA" "$MISTRAL" outputs/continual_llm/hilora/mistral_7b_v03/seed_$S $S \
     --method hilora --hilora_max_rank 16 --hilora_energy_threshold 0.8
 done
 # ---- 2) Mistral-7B O-LoRA (r=8) ----
@@ -58,13 +58,13 @@ print("\n### Mistral-7B-v0.3 (3-seed) ###")
 print(f"{'Method':26} {'FinalAvg':18} {'AvgForget':18} seeds")
 row("LoRA",   [f"outputs/continual_llm/lora/mistral_7b_v03/seed_{s}" for s in (42,43,44)])
 row("O-LoRA", [f"outputs/continual_llm/olora/mistral_7b_v03/seed_{s}" for s in (42,43,44)])
-row("HiLoRA", [f"outputs/continual_llm/hilora/mistral_7b_v03/seed_{s}" for s in (42,43,44)])
+row("ReCoLoRA", [f"outputs/continual_llm/hilora/mistral_7b_v03/seed_{s}" for s in (42,43,44)])
 
 print("\n### Qwen3-8B (3-seed) ###")
 print(f"{'Method':26} {'FinalAvg':18} {'AvgForget':18} seeds")
 row("LoRA",        [f"outputs/continual_llm/lora/qwen3_8b/seed_{s}" for s in (42,43,44)])
 row("O-LoRA r=8",  [f"outputs/continual_llm/olora/qwen3_8b/seed_{s}" for s in (42,43,44)])
 row("O-LoRA r=16", [f"outputs/continual_llm/olora/qwen3_8b_r16/seed_{s}" for s in (42,43,44)])
-row("HiLoRA",      [f"outputs/continual_llm_ablation/qwen3_8b/no_dynamic/seed_{s}" for s in (42,43,44)])
+row("ReCoLoRA",      [f"outputs/continual_llm_ablation/qwen3_8b/no_dynamic/seed_{s}" for s in (42,43,44)])
 PYEOF
 echo "===== SUITE ALL DONE $(date +%F_%H:%M:%S) ====="

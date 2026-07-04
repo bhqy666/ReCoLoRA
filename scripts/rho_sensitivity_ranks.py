@@ -22,7 +22,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
-from hilora.svd import randomized_svd, select_rank  # noqa: E402
+from recolora.svd import randomized_svd, select_rank  # noqa: E402
 
 MODEL = "/home/bhqy/.cache/huggingface/hub/models--Qwen--Qwen3-8B/snapshots/b968826d9c46dd6066d109eabc6255188de91218"
 

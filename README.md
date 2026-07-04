@@ -2,13 +2,13 @@
 
 Code and raw results for the paper *ReCoLoRA: Spectrum-Aware Recursive Consolidation for Continual LLM Fine-Tuning* (arXiv link to be added).
 
-> Note: the Python package (`src/hilora/`) and some output directory names keep the project's historical internal name; "ReCoLoRA" in the paper and this README refers to the same method.
+> Note: CLI method keys (`--method hilora` = Static ReCoLoRA, `--method recursive_hilora` = ReCoLoRA) and `outputs/` directory names keep the project's historical internal keys so that launcher scripts, recorded run configs, and released raw results stay consistent; `recolora`/`static_recolora` are accepted aliases. Everything else in the code uses the ReCoLoRA name.
 
 ReCoLoRA is a parameter-efficient framework for continual fine-tuning of LLMs. It initializes adapters from a randomized SVD of the pretrained weight, selects per-layer effective ranks with an elbow criterion, and trains the principal subspace before opening residual capacity. Before each new task, the current effective weight is re-decomposed into a frozen residual, a slowly updated principal component, and a fresh adapter (recursive consolidation), so every task starts from the model that has already absorbed the previous ones.
 
 ## Layout
 
-- `src/hilora/` — method implementation: `svd.py` (randomized SVD + elbow rank selection), `recursive.py` (recursive consolidation), `inject.py` (adapter injection), `vanilla.py`/`lora.py` (static variants), `olora.py` (O-LoRA baseline).
+- `src/recolora/` — method implementation: `svd.py` (randomized SVD + elbow rank selection), `recursive.py` (recursive consolidation), `inject.py` (adapter injection), `vanilla.py`/`lora.py` (static variants), `olora.py` (O-LoRA baseline).
 - `train_continual_llm.py` — main driver: sequential GLUE fine-tuning of a causal LM with ReCoLoRA or PEFT baselines (LoRA, PiSSA, AdaLoRA, DoRA, O-LoRA).
 - `train_taskbank_llm.py` — ReCoLoRA-TaskBank (one frozen branch per task, oracle routing).
 - `scripts/` — experiment launchers and aggregation:

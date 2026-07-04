@@ -30,25 +30,25 @@ except Exception:  # pragma: no cover - PEFT is only required for baseline metho
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
 
-from hilora import (  # noqa: E402
-    HiLoRARecoveryAllocator,
-    consolidate_recursive_hilora,
-    hilora_cl_regularization,
-    hilora_param_groups,
-    inject_hilora,
+from recolora import (  # noqa: E402
+    ReCoLoRARecoveryAllocator,
+    consolidate_recursive_recolora,
+    recolora_cl_regularization,
+    recolora_param_groups,
+    inject_recolora,
     inject_lora,
     inject_olora,
-    inject_recursive_hilora,
+    inject_recursive_recolora,
     iter_lora_modules,
     olora_advance_task,
     olora_orthogonality_loss,
     olora_param_groups,
-    recursive_hilora_param_groups,
-    recursive_hilora_slow_anchor_loss,
-    reset_hilora_masks,
-    set_hilora_stage,
-    snapshot_hilora_old_subspace,
-    update_hilora_taskwise_elbow,
+    recursive_recolora_param_groups,
+    recursive_recolora_slow_anchor_loss,
+    reset_recolora_masks,
+    set_recolora_stage,
+    snapshot_recolora_old_subspace,
+    update_recolora_taskwise_elbow,
 )
 
 
@@ -247,9 +247,16 @@ def pad_batch(input_ids, attention_masks, labels, pad_token_id: int) -> Dict[str
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Sequential GLUE continual-learning experiment for causal LLMs.")
+    # Method keys: "recursive_hilora" is the paper's ReCoLoRA (recursive consolidation);
+    # "hilora" is the paper's Static ReCoLoRA. The historical keys are kept because
+    # launcher scripts, recorded run configs, and outputs/ directory names use them;
+    # "recolora"/"static_recolora" are accepted as aliases.
     parser.add_argument(
         "--method",
-        choices=["hilora", "recursive_hilora", "lora", "olora", "pissa", "adalora", "dora", "qlora"],
+        choices=[
+            "hilora", "recursive_hilora", "recolora", "static_recolora",
+            "lora", "olora", "pissa", "adalora", "dora", "qlora",
+        ],
         default="hilora",
     )
     parser.add_argument(
@@ -348,7 +355,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--recursive_slow_ramp_min_scale", type=float, default=0.0)
     parser.add_argument("--recursive_slow_anchor_weight", type=float, default=0.0)
     parser.add_argument("--recursive_consolidate_verbose", action="store_true")
-    return parser.parse_args()
+    args = parser.parse_args()
+    # Normalize paper-name aliases to the historical internal keys.
+    args.method = {"recolora": "recursive_hilora", "static_recolora": "hilora"}.get(args.method, args.method)
+    return args
 
 
 def set_seed(seed: int) -> None:
@@ -457,9 +467,9 @@ def adapter_param_groups(model: nn.Module, args: argparse.Namespace) -> List[Dic
     learning_rate = float(getattr(args, "current_learning_rate", args.learning_rate))
     residual_lr = float(getattr(args, "current_residual_lr", args.residual_lr))
     if args.method == "hilora":
-        return hilora_param_groups(model, learning_rate, residual_lr)
+        return recolora_param_groups(model, learning_rate, residual_lr)
     if args.method == "recursive_hilora":
-        return recursive_hilora_param_groups(model, learning_rate, residual_lr)
+        return recursive_recolora_param_groups(model, learning_rate, residual_lr)
     if args.method == "olora":
         return olora_param_groups(model, learning_rate)
     if args.method in PEFT_METHODS:
@@ -519,9 +529,9 @@ def train_one_task(model, dataloader, task: str, args, device: torch.device) -> 
     model.train()
     configure_trainable(model, args.method)
     if args.method == "hilora":
-        set_hilora_stage(model, 1)
+        set_recolora_stage(model, 1)
         if args.hilora_taskwise_elbow:
-            task_rank_stats = update_hilora_taskwise_elbow(
+            task_rank_stats = update_recolora_taskwise_elbow(
                 model,
                 task_name=task,
                 task_index=getattr(args, "current_task_index", 1),
@@ -542,9 +552,9 @@ def train_one_task(model, dataloader, task: str, args, device: torch.device) -> 
                 seed=args.seed,
                 verbose=True,
             )
-            print(f"[HiLoRA-task-elbow] summary={json.dumps(task_rank_stats, sort_keys=True)}")
+            print(f"[ReCoLoRA-task-elbow] summary={json.dumps(task_rank_stats, sort_keys=True)}")
         else:
-            reset_hilora_masks(model)
+            reset_recolora_masks(model)
 
     updates_per_epoch = math.ceil(len(dataloader) / args.gradient_accumulation_steps)
     total_steps = max(1, int(math.ceil(args.epochs_per_task * updates_per_epoch)))
@@ -560,7 +570,7 @@ def train_one_task(model, dataloader, task: str, args, device: torch.device) -> 
     recovery_allocator = None
     recovery_stats: Dict[str, Any] = {}
     if args.method == "hilora" and args.hilora_dynamic_recovery:
-        recovery_allocator = HiLoRARecoveryAllocator(
+        recovery_allocator = ReCoLoRARecoveryAllocator(
             model,
             target_rank_ratio=args.hilora_target_rank_ratio,
             min_rank=args.hilora_min_rank,
@@ -586,7 +596,7 @@ def train_one_task(model, dataloader, task: str, args, device: torch.device) -> 
     while completed_steps < total_steps:
         for batch in dataloader:
             if args.method == "hilora" and completed_steps >= stage2_step:
-                set_hilora_stage(model, 2)
+                set_recolora_stage(model, 2)
             batch = move_batch(batch, device)
             with torch.cuda.amp.autocast(enabled=args.fp16):
                 outputs = model(**batch)
@@ -596,7 +606,7 @@ def train_one_task(model, dataloader, task: str, args, device: torch.device) -> 
                     and (args.hilora_anchor_weight > 0.0 or args.hilora_orth_weight > 0.0)
                     and int(getattr(args, "current_task_index", 1)) > 1
                 ):
-                    raw_loss = raw_loss + hilora_cl_regularization(
+                    raw_loss = raw_loss + recolora_cl_regularization(
                         model,
                         anchor_weight=args.hilora_anchor_weight,
                         orth_weight=args.hilora_orth_weight,
@@ -604,7 +614,7 @@ def train_one_task(model, dataloader, task: str, args, device: torch.device) -> 
                 if args.method == "olora" and args.olora_orth_weight > 0.0:
                     raw_loss = raw_loss + olora_orthogonality_loss(model, args.olora_orth_weight)
                 if args.method == "recursive_hilora" and args.recursive_slow_anchor_weight > 0.0:
-                    raw_loss = raw_loss + float(args.recursive_slow_anchor_weight) * recursive_hilora_slow_anchor_loss(model)
+                    raw_loss = raw_loss + float(args.recursive_slow_anchor_weight) * recursive_recolora_slow_anchor_loss(model)
                 loss = raw_loss / args.gradient_accumulation_steps
             scaler.scale(loss).backward()
             running_loss += float(loss.detach().cpu()) * args.gradient_accumulation_steps
@@ -626,7 +636,7 @@ def train_one_task(model, dataloader, task: str, args, device: torch.device) -> 
                     break
     progress.close()
     if args.method == "hilora":
-        set_hilora_stage(model, 2)
+        set_recolora_stage(model, 2)
     metrics = {"train_loss": running_loss / max(seen_batches, 1), "train_steps": completed_steps}
     if args.method == "hilora" and args.hilora_taskwise_elbow:
         metrics.update({f"task_elbow_{k}": v for k, v in task_rank_stats.items() if isinstance(v, (int, float))})
@@ -862,7 +872,7 @@ def main() -> None:
     print(f"[targets] {target_modules}")
 
     if args.method == "hilora":
-        inject_hilora(
+        inject_recolora(
             model,
             target_modules=target_modules,
             max_rank=args.hilora_max_rank,
@@ -883,7 +893,7 @@ def main() -> None:
             verbose=True,
         )
     elif args.method == "recursive_hilora":
-        inject_recursive_hilora(
+        inject_recursive_recolora(
             model,
             target_modules=target_modules,
             max_rank=args.recursive_max_rank,
@@ -971,7 +981,7 @@ def main() -> None:
             args.current_layer_bonus_map = layer_bonus_map
             args.current_depth_bonus_map = depth_bonus_map
             print(
-                f"[HiLoRA-task-elbow] task={task} stage={stage_index} "
+                f"[ReCoLoRA-task-elbow] task={task} stage={stage_index} "
                 f"cumulative_rank_bonus={args.current_rank_bonus} "
                 f"rank_floor={args.hilora_task_min_active_rank} "
                 f"freeze_old_ranks={args.hilora_freeze_old_ranks} "
@@ -1000,7 +1010,7 @@ def main() -> None:
         release_cuda_cache()
 
         if args.method == "recursive_hilora":
-            consolidation_stats = consolidate_recursive_hilora(
+            consolidation_stats = consolidate_recursive_recolora(
                 model,
                 max_rank=args.recursive_max_rank,
                 min_rank=args.recursive_min_rank,
@@ -1017,7 +1027,7 @@ def main() -> None:
                 verbose=args.recursive_consolidate_verbose,
             )
             train_metrics.update({f"consolidate_{k}": v for k, v in consolidation_stats.items()})
-            print(f"[RecursiveHiLoRA] consolidate={json.dumps(consolidation_stats, sort_keys=True)}")
+            print(f"[RecursiveReCoLoRA] consolidate={json.dumps(consolidation_stats, sort_keys=True)}")
             cast_adapter_parameters_to_fp32(model)
             configure_trainable(model, args.method)
             release_cuda_cache()
@@ -1041,8 +1051,8 @@ def main() -> None:
         if args.method == "hilora" and args.hilora_taskwise_elbow and (
             args.hilora_anchor_weight > 0.0 or args.hilora_orth_weight > 0.0
         ):
-            snapshot_stats = snapshot_hilora_old_subspace(model)
-            print(f"[HiLoRA-CL] snapshot={json.dumps(snapshot_stats, sort_keys=True)}")
+            snapshot_stats = snapshot_recolora_old_subspace(model)
+            print(f"[ReCoLoRA-CL] snapshot={json.dumps(snapshot_stats, sort_keys=True)}")
 
     summary = compute_forgetting(records, tasks)
     write_outputs(Path(args.output_dir), args, records, train_records, summary, parameter_counts)

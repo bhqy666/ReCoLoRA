@@ -5,7 +5,7 @@ from typing import Dict, Iterable, List, Optional, Tuple
 import torch
 import torch.nn as nn
 
-from .lora import HiLoRALinear
+from .lora import ReCoLoRALinear
 from .svd import randomized_svd, select_rank
 
 
@@ -26,7 +26,7 @@ def _get_parent_module(model: nn.Module, module_name: str) -> Tuple[nn.Module, s
     return parent, parts[-1]
 
 
-def inject_hilora(
+def inject_recolora(
     model: nn.Module,
     target_modules: Iterable[str],
     max_rank: int = 16,
@@ -47,7 +47,7 @@ def inject_hilora(
     preserve_inactive_ranks: bool = False,
     verbose: bool = False,
 ) -> List[str]:
-    """Replace target Linear modules with HiLoRA adapters.
+    """Replace target Linear modules with ReCoLoRA adapters.
 
     Returns list of replaced module names.
     """
@@ -107,7 +107,7 @@ def inject_hilora(
         w_p = (u_main * s_main) @ vh_main
         w_res = w_cpu - w_p
 
-        new_module = HiLoRALinear(
+        new_module = ReCoLoRALinear(
             module,
             r_main=r_alloc,
             r_res=r_res,
@@ -166,57 +166,57 @@ def inject_hilora(
 
         if verbose:
             print(
-                f"[HiLoRA] Replaced {name} with r_main={r_main}, "
+                f"[ReCoLoRA] Replaced {name} with r_main={r_main}, "
                 f"r_capacity={r_alloc}, r_res={r_res}, "
                 f"preserve_inactive={new_module.preserve_inactive_ranks}"
             )
 
     if verbose and not replaced:
-        print("[HiLoRA] No target modules matched.")
+        print("[ReCoLoRA] No target modules matched.")
 
     return replaced
 
 
-def iter_hilora_modules(model: nn.Module) -> List[HiLoRALinear]:
-    modules: List[HiLoRALinear] = []
+def iter_recolora_modules(model: nn.Module) -> List[ReCoLoRALinear]:
+    modules: List[ReCoLoRALinear] = []
     for module in model.modules():
-        if isinstance(module, HiLoRALinear):
+        if isinstance(module, ReCoLoRALinear):
             modules.append(module)
     return modules
 
 
-def iter_named_hilora_modules(model: nn.Module) -> List[Tuple[str, HiLoRALinear]]:
-    modules: List[Tuple[str, HiLoRALinear]] = []
+def iter_named_recolora_modules(model: nn.Module) -> List[Tuple[str, ReCoLoRALinear]]:
+    modules: List[Tuple[str, ReCoLoRALinear]] = []
     for name, module in model.named_modules():
-        if isinstance(module, HiLoRALinear):
+        if isinstance(module, ReCoLoRALinear):
             modules.append((name, module))
     return modules
 
 
-def set_hilora_stage(model: nn.Module, stage: int) -> None:
-    for module in iter_hilora_modules(model):
+def set_recolora_stage(model: nn.Module, stage: int) -> None:
+    for module in iter_recolora_modules(model):
         module.set_stage(stage)
 
 
-def reset_hilora_masks(model: nn.Module) -> None:
-    for module in iter_hilora_modules(model):
+def reset_recolora_masks(model: nn.Module) -> None:
+    for module in iter_recolora_modules(model):
         module.reset_rank_mask()
         module.set_recovery_ratio(1.0)
 
 
-def snapshot_hilora_old_subspace(model: nn.Module) -> dict:
+def snapshot_recolora_old_subspace(model: nn.Module) -> dict:
     """Save the currently active principal ranks as anchors for later tasks."""
     snapshots = 0
     active_ranks: List[int] = []
-    for module in iter_hilora_modules(model):
+    for module in iter_recolora_modules(model):
         if module.lora_A is None or module.lora_B is None or module.r_main <= 0:
             continue
         rank = max(0, min(int(getattr(module, "current_active_rank", module.r_main)), module.r_main))
         if rank <= 0:
             continue
-        module.hilora_anchor_rank = rank
-        module.hilora_anchor_A = module.lora_A.detach()[:rank].float().cpu().clone()
-        module.hilora_anchor_B = module.lora_B.detach()[:, :rank].float().cpu().clone()
+        module.recolora_anchor_rank = rank
+        module.recolora_anchor_A = module.lora_A.detach()[:rank].float().cpu().clone()
+        module.recolora_anchor_B = module.lora_B.detach()[:, :rank].float().cpu().clone()
         snapshots += 1
         active_ranks.append(rank)
     return {
@@ -226,7 +226,7 @@ def snapshot_hilora_old_subspace(model: nn.Module) -> dict:
     }
 
 
-def hilora_cl_regularization(
+def recolora_cl_regularization(
     model: nn.Module,
     anchor_weight: float = 0.0,
     orth_weight: float = 0.0,
@@ -236,15 +236,15 @@ def hilora_cl_regularization(
     dtype = None
     anchor_terms: List[torch.Tensor] = []
     orth_terms: List[torch.Tensor] = []
-    for module in iter_hilora_modules(model):
+    for module in iter_recolora_modules(model):
         if module.lora_A is None or module.lora_B is None or module.r_main <= 0:
             continue
         if device is None:
             device = module.lora_A.device
             dtype = module.lora_A.dtype
-        anchor_rank = int(getattr(module, "hilora_anchor_rank", 0) or 0)
-        anchor_a = getattr(module, "hilora_anchor_A", None)
-        anchor_b = getattr(module, "hilora_anchor_B", None)
+        anchor_rank = int(getattr(module, "recolora_anchor_rank", 0) or 0)
+        anchor_a = getattr(module, "recolora_anchor_A", None)
+        anchor_b = getattr(module, "recolora_anchor_B", None)
         if anchor_rank <= 0 or anchor_a is None or anchor_b is None:
             continue
         anchor_rank = max(0, min(anchor_rank, module.r_main, module.lora_A.shape[0], module.lora_B.shape[1]))
@@ -280,7 +280,7 @@ def hilora_cl_regularization(
     return reg
 
 
-def update_hilora_taskwise_elbow(
+def update_recolora_taskwise_elbow(
     model: nn.Module,
     task_name: str,
     task_index: int,
@@ -307,7 +307,7 @@ def update_hilora_taskwise_elbow(
     the active-rank mask, so old adapter slots are preserved and new slots can
     be opened for later tasks.
     """
-    named_modules = list(iter_named_hilora_modules(model))
+    named_modules = list(iter_named_recolora_modules(model))
     layer_indices = []
     for name, _ in named_modules:
         match = re.search(r"(?:^|\.)(?:layers|h|blocks|block)\.(\d+)(?:\.|$)", name)
@@ -403,7 +403,7 @@ def update_hilora_taskwise_elbow(
         trainable_ranks.append(int(getattr(module, "current_trainable_rank", target)))
         if verbose:
             print(
-                f"[HiLoRA-task-elbow] task={task_name} layer={name} "
+                f"[ReCoLoRA-task-elbow] task={task_name} layer={name} "
                 f"elbow={r_elbow} bonus={per_layer_bonus} floor={active_rank_floor} "
                 f"active={target}/{capacity} trainable={trainable_ranks[-1]}"
             )
@@ -428,7 +428,7 @@ def update_hilora_taskwise_elbow(
     }
 
 
-class HiLoRARecoveryAllocator:
+class ReCoLoRARecoveryAllocator:
     """AdaLoRA-style rank masking plus dynamic residual recovery.
 
     The allocator uses per-rank importance scores from LoRA gradients:
@@ -447,7 +447,7 @@ class HiLoRARecoveryAllocator:
         mask_interval: int = 1,
         recovery_ratio_mode: str = "kept",
     ) -> None:
-        self.modules = iter_hilora_modules(model)
+        self.modules = iter_recolora_modules(model)
         self.target_rank_ratio = float(max(0.0, min(1.0, target_rank_ratio)))
         self.min_rank = max(1, int(min_rank))
         self.beta1 = float(beta1)
@@ -467,7 +467,7 @@ class HiLoRARecoveryAllocator:
         self.exp_unc = [torch.zeros(module.r_main) for module in self.modules]
 
     @staticmethod
-    def _rank_importance(module: HiLoRALinear) -> Optional[torch.Tensor]:
+    def _rank_importance(module: ReCoLoRALinear) -> Optional[torch.Tensor]:
         if module.lora_A is None or module.lora_B is None:
             return None
         if module.lora_A.grad is None or module.lora_B.grad is None:
@@ -534,14 +534,14 @@ class HiLoRARecoveryAllocator:
         }
 
 
-def hilora_param_groups(
+def recolora_param_groups(
     model: nn.Module,
     main_lr: float,
     residual_lr: Optional[float] = None,
 ) -> List[dict]:
     main_params = []
     res_params = []
-    for module in iter_hilora_modules(model):
+    for module in iter_recolora_modules(model):
         main_params.extend(module.lora_parameters())
         res_params.extend(module.residual_parameters())
 

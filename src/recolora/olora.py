@@ -5,7 +5,7 @@ Wang et al., "Orthogonal Subspace Learning for Language Model Continual
 Learning" (Findings of EMNLP 2023; https://github.com/cmnfriend/O-LoRA),
 adapted to this repository's custom LoRA injection harness so that it shares
 the exact same continual-GLUE protocol, task order, training budget, and
-evaluation code as the HiLoRA / LoRA / PiSSA / AdaLoRA / DoRA baselines.
+evaluation code as the ReCoLoRA / LoRA / PiSSA / AdaLoRA / DoRA baselines.
 
 Mechanism
 ---------

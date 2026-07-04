@@ -1,5 +1,5 @@
 """
-Figure 2: HiLoRA pipeline — an intuitive, story-style diagram.
+Figure 2: ReCoLoRA pipeline — an intuitive, story-style diagram.
 
 Reads left to right as four steps:
   (1) a frozen pretrained weight matrix W0

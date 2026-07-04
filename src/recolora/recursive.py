@@ -8,7 +8,7 @@ import torch.nn.functional as F
 from .svd import randomized_svd
 
 
-class RecursiveHiLoRALinear(nn.Module):
+class RecursiveReCoLoRALinear(nn.Module):
     """Recursive slow/fast low-rank linear layer.
 
     The effective weight is:
@@ -198,7 +198,7 @@ def _select_elbow_rank(
     return max(min_rank, min(idx + 1, max_rank))
 
 
-def inject_recursive_hilora(
+def inject_recursive_recolora(
     model: nn.Module,
     target_modules: Iterable[str],
     max_rank: int = 32,
@@ -242,7 +242,7 @@ def inject_recursive_hilora(
         principal = (u_s * s_s) @ vh_s
         residual = weight - principal
 
-        new_module = RecursiveHiLoRALinear(
+        new_module = RecursiveReCoLoRALinear(
             module,
             slow_rank=slow_rank,
             fast_rank=fast_rank,
@@ -269,27 +269,27 @@ def inject_recursive_hilora(
         setattr(parent, child_name, new_module)
         replaced.append(name)
         if verbose:
-            print(f"[RecursiveHiLoRA] Replaced {name} slow_rank={slow_rank} fast_rank={fast_rank}")
+            print(f"[RecursiveReCoLoRA] Replaced {name} slow_rank={slow_rank} fast_rank={fast_rank}")
 
     if verbose and not replaced:
-        print("[RecursiveHiLoRA] No target modules matched.")
+        print("[RecursiveReCoLoRA] No target modules matched.")
     return replaced
 
 
-def iter_recursive_hilora_modules(model: nn.Module) -> List[RecursiveHiLoRALinear]:
-    return [module for module in model.modules() if isinstance(module, RecursiveHiLoRALinear)]
+def iter_recursive_recolora_modules(model: nn.Module) -> List[RecursiveReCoLoRALinear]:
+    return [module for module in model.modules() if isinstance(module, RecursiveReCoLoRALinear)]
 
 
-def iter_named_recursive_hilora_modules(model: nn.Module) -> List[Tuple[str, RecursiveHiLoRALinear]]:
+def iter_named_recursive_recolora_modules(model: nn.Module) -> List[Tuple[str, RecursiveReCoLoRALinear]]:
     return [
         (name, module)
         for name, module in model.named_modules()
-        if isinstance(module, RecursiveHiLoRALinear)
+        if isinstance(module, RecursiveReCoLoRALinear)
     ]
 
 
 @torch.no_grad()
-def consolidate_recursive_hilora(
+def consolidate_recursive_recolora(
     model: nn.Module,
     max_rank: int = 32,
     min_rank: int = 2,
@@ -305,7 +305,7 @@ def consolidate_recursive_hilora(
     seed: Optional[int] = None,
     verbose: bool = False,
 ) -> dict:
-    named_modules = iter_named_recursive_hilora_modules(model)
+    named_modules = iter_named_recursive_recolora_modules(model)
     if max_fast_rank is None:
         max_fast_rank = max_rank + max(1, int(fast_rank_bonus))
 
@@ -361,7 +361,7 @@ def consolidate_recursive_hilora(
         )
         if verbose:
             print(
-                f"[RecursiveHiLoRA-consolidate] module={idx} layer={name} "
+                f"[RecursiveReCoLoRA-consolidate] module={idx} layer={name} "
                 f"slow_rank={old_slow_ranks[-1]}->{slow_rank} fast_rank={fast_rank} error={error:.6e}"
             )
 
@@ -387,10 +387,10 @@ def consolidate_recursive_hilora(
     }
 
 
-def recursive_hilora_param_groups(model: nn.Module, fast_lr: float, slow_lr: float) -> List[dict]:
+def recursive_recolora_param_groups(model: nn.Module, fast_lr: float, slow_lr: float) -> List[dict]:
     fast_params = []
     slow_params = []
-    for module in iter_recursive_hilora_modules(model):
+    for module in iter_recursive_recolora_modules(model):
         fast_params.extend([module.fast_A, module.fast_B])
         slow_params.extend([module.slow_A, module.slow_B])
     groups = []
@@ -401,8 +401,8 @@ def recursive_hilora_param_groups(model: nn.Module, fast_lr: float, slow_lr: flo
     return groups
 
 
-def recursive_hilora_slow_anchor_loss(model: nn.Module) -> torch.Tensor:
-    terms = [module.slow_anchor_loss() for module in iter_recursive_hilora_modules(model)]
+def recursive_recolora_slow_anchor_loss(model: nn.Module) -> torch.Tensor:
+    terms = [module.slow_anchor_loss() for module in iter_recursive_recolora_modules(model)]
     if not terms:
         return torch.zeros((), device=next(model.parameters()).device)
     return torch.stack(terms).mean()

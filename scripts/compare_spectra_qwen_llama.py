@@ -6,7 +6,7 @@ randomized SVD + elbow/energy rank selector as make_elbow_figure.py /
 rho_sensitivity_ranks.py (rank=20, oversample=5, n_iter=1, seed=42,
 energy_threshold=0.8, elbow_ratio=1.5, min_rank=2, max_rank=16) on
 Qwen3-8B vs Llama-3.1-8B-Instruct vs Llama-3-8B (NousResearch) to see
-whether the spectra differ in ways that would explain why the HiLoRA
+whether the spectra differ in ways that would explain why the ReCoLoRA
 schedule tuned on Qwen3 transfers poorly to Llama.
 
 For each matrix we report:
@@ -26,7 +26,7 @@ import torch
 from safetensors import safe_open
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
-from hilora.svd import randomized_svd, select_rank  # noqa: E402
+from recolora.svd import randomized_svd, select_rank  # noqa: E402
 
 MAX_RANK = 16
 RESIDUAL_RANK = 4

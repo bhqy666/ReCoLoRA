@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Run the remaining O-LoRA seeds (43, 44) on Qwen3-8B with the exact same
-# continual-GLUE protocol as the existing HiLoRA/LoRA seed runs, then aggregate
+# continual-GLUE protocol as the existing ReCoLoRA/LoRA seed runs, then aggregate
 # the 3-seed comparison. Designed to be launched detached (setsid nohup).
 set -u
 cd /home/bhqy/Documents/project/HiLoRA
@@ -44,7 +44,7 @@ def fmt(vals):
 methods = {
   "LoRA":   [f"outputs/continual_llm/lora/qwen3_8b/seed_{s}" for s in (42,43,44)],
   "O-LoRA": [f"outputs/continual_llm/olora/qwen3_8b/seed_{s}" for s in (42,43,44)],
-  "HiLoRA(no_dynamic)": [f"outputs/continual_llm_ablation/qwen3_8b/no_dynamic/seed_{s}" for s in (42,43,44)],
+  "ReCoLoRA(no_dynamic)": [f"outputs/continual_llm_ablation/qwen3_8b/no_dynamic/seed_{s}" for s in (42,43,44)],
 }
 print(f"{'Method':22} {'FinalAvg':18} {'AvgForget':18} seeds")
 for name, dirs in methods.items():

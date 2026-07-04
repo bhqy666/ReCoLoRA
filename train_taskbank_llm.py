@@ -18,12 +18,13 @@ from peft import LoraConfig, TaskType, get_peft_model
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 import train_continual_llm as base
-from hilora import inject_hilora, inject_lora
+from recolora import inject_recolora, inject_lora
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="HiLoRA oracle task-bank experiment.")
-    parser.add_argument("--branch_method", choices=["hilora", "lora", "pissa"], default="hilora")
+    parser = argparse.ArgumentParser(description="ReCoLoRA oracle task-bank experiment.")
+    # "hilora" is the historical key for a ReCoLoRA-initialized branch; "recolora" is an alias.
+    parser.add_argument("--branch_method", choices=["hilora", "recolora", "lora", "pissa"], default="hilora")
     parser.add_argument("--model_name_or_path", required=True)
     parser.add_argument("--tasks", default="sst2,mrpc,qnli,rte,qqp,mnli")
     parser.add_argument("--output_dir", required=True)
@@ -70,29 +71,32 @@ def parse_args() -> argparse.Namespace:
 
     # Fields consumed by train_continual_llm helpers.
     parser.set_defaults(
-        hilora_taskwise_elbow=True,
-        hilora_allocate_full_rank=True,
-        hilora_preserve_inactive_ranks=True,
-        hilora_freeze_old_ranks=False,
-        hilora_old_train_tail=0,
-        hilora_old_rank_grad_scale=1.0,
-        hilora_anchor_weight=0.0,
-        hilora_orth_weight=0.0,
-        hilora_min_new_ranks_per_task=0,
-        hilora_dynamic_recovery=False,
-        hilora_target_rank_ratio=0.5,
-        hilora_recovery_ratio_mode="kept",
-        hilora_mask_interval=1,
-        hilora_rank_beta1=0.85,
-        hilora_rank_beta2=0.85,
+        recolora_taskwise_elbow=True,
+        recolora_allocate_full_rank=True,
+        recolora_preserve_inactive_ranks=True,
+        recolora_freeze_old_ranks=False,
+        recolora_old_train_tail=0,
+        recolora_old_rank_grad_scale=1.0,
+        recolora_anchor_weight=0.0,
+        recolora_orth_weight=0.0,
+        recolora_min_new_ranks_per_task=0,
+        recolora_dynamic_recovery=False,
+        recolora_target_rank_ratio=0.5,
+        recolora_recovery_ratio_mode="kept",
+        recolora_mask_interval=1,
+        recolora_rank_beta1=0.85,
+        recolora_rank_beta2=0.85,
         task_max_steps_map="",
         task_learning_rate_map="",
         task_residual_lr_map="",
     )
-    return parser.parse_args()
+    args = parser.parse_args()
+    if args.branch_method == "recolora":
+        args.branch_method = "hilora"
+    return args
 
 
-def build_hilora_model(args: argparse.Namespace, device: torch.device):
+def build_recolora_model(args: argparse.Namespace, device: torch.device):
     model = AutoModelForCausalLM.from_pretrained(
         args.model_name_or_path,
         trust_remote_code=args.trust_remote_code,
@@ -109,7 +113,7 @@ def build_hilora_model(args: argparse.Namespace, device: torch.device):
         param.requires_grad_(False)
     target_modules = base.infer_target_modules(model, args.target_modules)
     print(f"[TaskBank] targets={target_modules}")
-    inject_hilora(
+    inject_recolora(
         model,
         target_modules=target_modules,
         max_rank=args.hilora_max_rank,
@@ -138,7 +142,7 @@ def build_hilora_model(args: argparse.Namespace, device: torch.device):
 def build_branch_model(args: argparse.Namespace, device: torch.device):
     if args.branch_method == "hilora":
         args.method = "hilora"
-        return build_hilora_model(args, device)
+        return build_recolora_model(args, device)
 
     args.method = args.branch_method
     model = AutoModelForCausalLM.from_pretrained(

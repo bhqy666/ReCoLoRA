@@ -2,7 +2,7 @@
 # Extra robustness experiments on Qwen3-8B, run sequentially on a single GPU.
 #
 # Energy-threshold (rho) sensitivity downstream training
-# (HiLoRA, rho in {0.6, 0.9}, original task order, seeds 42/43/44)
+# (ReCoLoRA, rho in {0.6, 0.9}, original task order, seeds 42/43/44)
 # complements scripts/rho_sensitivity_ranks.py (rank-distribution only).
 #
 # Skips any run whose continual_results.json already exists, so this script

@@ -2,8 +2,7 @@
 logs/
 archive/
 results/
-arxiv_v1_upload/
-arxiv_v1_upload.tar.gz
+arxiv_v1_upload*
 CLEANUP_NOTES.md
 人脑多任务学习借鉴.pdf
 LLM微调.docx
@@ -30,3 +29,5 @@ main.log
 
 # backups
 *.bak*
+compilation.log
+view.pdf

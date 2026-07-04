@@ -6,8 +6,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class HiLoRALinear(nn.Module):
-    """Linear layer with HiLoRA adapters (principal + residual)."""
+class ReCoLoRALinear(nn.Module):
+    """Linear layer with ReCoLoRA adapters (principal + residual)."""
 
     def __init__(
         self,
@@ -225,7 +225,7 @@ class HiLoRALinear(nn.Module):
         rank_res: int,
     ) -> None:
         if self.r_main != rank_main or self.r_res != rank_res:
-            raise ValueError("Rank mismatch in HiLoRALinear.init_from_svd")
+            raise ValueError("Rank mismatch in ReCoLoRALinear.init_from_svd")
 
         self._init_adapter(
             self.lora_A,
@@ -252,7 +252,7 @@ class HiLoRALinear(nn.Module):
         rank_main: int,
     ) -> None:
         if self.r_main != rank_main:
-            raise ValueError("Rank mismatch in HiLoRALinear.init_main_from_svd")
+            raise ValueError("Rank mismatch in ReCoLoRALinear.init_main_from_svd")
 
         self._init_adapter(
             self.lora_A,

@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 """Generate an empirical elbow/energy rank-selection figure from real Qwen3-8B weights.
 
-Reproduces the exact rank-selection computation used by HiLoRA's injection
-code (src/hilora/inject.py): randomized SVD with rank = max_rank + residual_rank,
+Reproduces the exact rank-selection computation used by ReCoLoRA's injection
+code (src/recolora/inject.py): randomized SVD with rank = max_rank + residual_rank,
 energy-threshold + elbow-ratio rank selection on the truncated spectrum.
 """
 import json
@@ -19,7 +19,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
-from hilora.svd import randomized_svd, select_rank  # noqa: E402
+from recolora.svd import randomized_svd, select_rank  # noqa: E402
 
 MODEL = "/home/bhqy/.cache/huggingface/hub/models--Qwen--Qwen3-8B/snapshots/b968826d9c46dd6066d109eabc6255188de91218"
 
