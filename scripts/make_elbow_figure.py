@@ -80,48 +80,44 @@ print(f"\nfull spectrum dim d={d}, sigma_1={full_spectrum[0]:.4f}, sigma_d={full
 
 print(f"first 20 raw singular values: {np.array2string(full_spectrum[:20], precision=3)}")
 
-fig, axes = plt.subplots(1, 2, figsize=(9, 3.2))
+fig, axes = plt.subplots(1, 3, figsize=(11.5, 3.0))
 
 ax = axes[0]
-ax.plot(full_idx, full_spectrum, color="tab:blue", linewidth=1.2)
-ax.axvspan(1, RANK_SVD, color="tab:orange", alpha=0.25, label=f"truncated budget ($r_{{\\max}}+r_{{res}}={RANK_SVD}$)")
-ax.axvline(r_main, color="tab:red", linestyle="--", label=f"$r^*={r_main}$, $\\sigma_{{r^*}}={full_spectrum[r_main - 1]:.2f}$")
+ax.plot(full_idx, full_spectrum, color="#2a78d6", linewidth=1.2)
+ax.axvspan(1, RANK_SVD, color="#eb6834", alpha=0.22, label=f"truncated budget ($r_{{\\max}}+r_{{res}}={RANK_SVD}$)")
+ax.axvline(r_main, color="#e34948", linestyle="--", label=f"$r^*={r_main}$")
 ax.set_xscale("log")
-ax.set_xlabel("Singular value index $i$ (log scale)")
-ax.set_ylabel(r"Singular value $\sigma_i$ (raw)")
-ax.set_title(f"(a) Raw spectrum of layer-0 q_proj ($d={d}$)")
+ax.set_xlabel("Singular value index $i$ (log scale)", fontsize=9)
+ax.set_ylabel(r"Singular value $\sigma_i$", fontsize=9)
+ax.set_title(f"(a) Raw spectrum, layer-0 q_proj ($d={d}$)", fontsize=9.5)
 ax.legend(fontsize=7, loc="upper right")
-ax.grid(alpha=0.3, which="both")
-ax.annotate(
-    f"$r^*={r_main} \\ll d={d}$",
-    xy=(0.97, 0.55), xycoords="axes fraction",
-    fontsize=8, color="tab:red", ha="right",
-)
+ax.grid(alpha=0.3, which="both", linewidth=0.5)
+ax.tick_params(labelsize=8)
 
 ax = axes[1]
-ax.plot(idx, cum_energy, "o-", color="tab:green", markersize=4)
+ax.plot(idx, cum_energy, "o-", color="#008300", markersize=4, linewidth=1.5)
 ax.axhline(ENERGY_THRESHOLD, color="black", linestyle=":", label=r"$\rho=0.8$")
-ax.axvline(r_main, color="tab:red", linestyle="--", label=f"$r^*={r_main}$")
-ax.set_xlabel("Singular value index $i$")
-ax.set_ylabel("Cumulative energy ratio")
-ax.set_title(f"(b) Energy ratio within truncated budget ($r_{{\\max}}+r_{{res}}={RANK_SVD}$)")
+ax.axvline(r_main, color="#e34948", linestyle="--", label=f"$r^*={r_main}$")
+ax.set_xlabel("Singular value index $i$", fontsize=9)
+ax.set_ylabel("Cumulative energy ratio", fontsize=9)
+ax.set_title("(b) Energy within truncated budget", fontsize=9.5)
 ax.legend(fontsize=8, loc="lower right")
-ax.grid(alpha=0.3)
+ax.grid(alpha=0.3, linewidth=0.5)
+ax.tick_params(labelsize=8)
+
+ax = axes[2]
+bins = np.arange(MIN_RANK - 0.5, MAX_RANK + 1.5, 1)
+ax.hist(vals, bins=bins, color="#2a78d6", edgecolor="white", linewidth=0.8)
+ax.axvline(sum(vals) / len(vals), color="#e34948", linestyle="--",
+           label=f"mean $r^*={sum(vals)/len(vals):.2f}$")
+ax.set_xlabel(r"Selected principal rank $r^*$", fontsize=9)
+ax.set_ylabel("Number of matrices", fontsize=9)
+ax.set_title(f"(c) $r^*$ across {len(vals)} q/v matrices", fontsize=9.5)
+ax.legend(fontsize=8, loc="upper left")
+ax.grid(alpha=0.3, axis="y", linewidth=0.5)
+ax.tick_params(labelsize=8)
 
 fig.tight_layout()
 out_path = os.path.join(os.path.dirname(__file__), "..", "figures", "elbow_rank_selection.pdf")
 fig.savefig(out_path, bbox_inches="tight")
 print(f"\nSaved {out_path}")
-
-# Histogram of r_main across all q_proj/v_proj matrices
-fig2, ax2 = plt.subplots(figsize=(4.5, 3.2))
-bins = np.arange(MIN_RANK - 0.5, MAX_RANK + 1.5, 1)
-ax2.hist(vals, bins=bins, color="tab:blue", edgecolor="black")
-ax2.set_xlabel(r"Selected principal rank $r^*$")
-ax2.set_ylabel("Number of matrices")
-ax2.set_title(f"Distribution over {len(vals)} q_proj/v_proj matrices")
-ax2.grid(alpha=0.3, axis="y")
-fig2.tight_layout()
-out_path2 = os.path.join(os.path.dirname(__file__), "..", "figures", "elbow_rank_histogram.pdf")
-fig2.savefig(out_path2, bbox_inches="tight")
-print(f"Saved {out_path2}")

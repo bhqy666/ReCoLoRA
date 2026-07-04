@@ -9,6 +9,10 @@
 \usepackage{cite}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta, positioning, fit}
+\usepackage{float}
+\newfloat{algorithm}{t}{loa}
+\floatname{algorithm}{Algorithm}
+\usepackage{algpseudocode}
 \newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 
 \title{\textbf{ReCoLoRA}: Spectrum-Aware Recursive Consolidation for Continual LLM Fine-Tuning}
@@ -39,7 +43,7 @@ Our contributions are:
     \item We formulate ReCoLoRA, a spectrum-aware PEFT framework for continual fine-tuning that initializes adapters from a randomized SVD of the pretrained weight, selects an effective rank per layer with an elbow criterion, and adapts the principal subspace before the residual one.
     \item We introduce recursive consolidation as the continual mechanism of ReCoLoRA: each finished task is folded back into the model by re-decomposing the current effective weight into a frozen residual, a slowly trainable principal component, and a fresh adapter. This produces a single deployable model and, in our experiments, retains old tasks more reliably than freezing or anchoring ranks inside one shared adapter.
     \item We introduce ReCoLoRA-TaskBank, an oracle-routed task-incremental variant that isolates one spectrum-initialized branch per task. It removes overwriting by construction and serves as an upper bound on retention.
-    \item On a six-task continual GLUE sequence over Qwen3-8B, Llama-3.1-8B-Instruct, Mistral-7B-v0.3, and InternLM2.5-7B-Chat, and against rank-swept baselines, ReCoLoRA achieves the best final average score on three of the four backbones with far fewer trainable parameters than the strongest rank-256 baseline, while ReCoLoRA-TaskBank attains $0.8957\pm0.0026$ final average score with $0.0000\pm0.0000$ average forgetting on Qwen3-8B across three seeds under oracle routing.
+    \item On a six-task continual GLUE sequence over Qwen3-8B, Llama-3.1-8B-Instruct, Mistral-7B-v0.3, and InternLM2.5-7B-Chat, and against rank-swept baselines, ReCoLoRA achieves the best final average score on three of the four backbones with far fewer trainable parameters than the strongest rank-256 baseline. ReCoLoRA-TaskBank reaches $0.8957\pm0.0026$ final average score on Qwen3-8B under oracle routing, with zero forgetting guaranteed by construction.
 \end{itemize}
 
 \section{Background and Related Work}
@@ -73,7 +77,7 @@ Continual learning in NLP differs from vision because tasks may have different i
 For LoRA-style continual learning, O-LoRA~\cite{wang2023olora} learns new tasks in orthogonal low-rank subspaces and fixes the old ones to limit interference, while C-LoRA~\cite{zhang2025clora} uses a routing matrix to manage parameter updates across tasks so that learned subspaces can be reused without maintaining many independent adapters. ReCoLoRA shares the view that subspace interference is the central problem, but addresses it differently: it starts from the pretrained weight spectrum and, after each task, recomputes a slow principal subspace from the current effective weight, so earlier knowledge is carried forward inside one evolving model. The TaskBank variant sits at the opposite end, close to adapter-isolation and routing methods: it allocates one spectrum-initialized branch per task and, in this paper, uses oracle routing as an upper bound before a learned, input-conditioned router is introduced.
 
 \section{Method}
-ReCoLoRA modifies LoRA along three axes: spectral initialization, adaptive effective rank, and staged residual recovery. Figure~\ref{fig:pipeline} summarizes the pipeline.
+ReCoLoRA modifies LoRA along three axes: spectral initialization, adaptive effective rank, and staged residual recovery. Figure~\ref{fig:pipeline} summarizes the pipeline, and Algorithm~\ref{alg:recolora} gives the full continual procedure.
 
 The method is designed around two observations. First, pretrained transformer weights are not isotropic: their singular spectra often show a small number of dominant directions followed by a long tail. Second, catastrophic forgetting in sequential fine-tuning is caused not only by parameter count, but also by where the update is applied. Random low-rank factors can use their capacity in directions that fit the current task while interfering with previous behavior. ReCoLoRA therefore asks the optimizer to first use directions already important to the pretrained model, and only later use residual capacity.
 
@@ -122,7 +126,7 @@ with clipping to a minimum and maximum rank. The energy ratio is normalized agai
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{figures/elbow_rank_selection.pdf}
-\caption{Elbow/energy-based rank selection (Eq.~\ref{eq:elbow}) applied to a real Qwen3-8B weight matrix (\texttt{model.layers.0.self\_attn.q\_proj}, $d=4096$), using the same randomized SVD (truncated rank $r_{\max}+r_{res}=20$, oversample 5, seed 42) and selection hyperparameters ($\rho=0.8$, elbow ratio $1.5$, $r_{\max}=16$, $r_{\min}=2$) as the main experiments. (a) Raw (unnormalized) singular-value spectrum on a log-index/linear-value axis, in the classic ``knee'' style: $\sigma_i$ drops sharply over the first $\sim$10 indices and then flattens across the remaining $d-20\approx4076$ dimensions. The orange band marks the truncated computation budget $r_{\max}+r_{res}=20$ that randomized SVD actually computes, and the selected rank $r^*=8$ (with $\sigma_{r^*}=6.54$) falls well inside it ($r^*\ll d$), visually confirming that only a handful of directions carry most of the matrix's spectral mass. (b) Cumulative energy ratio within the truncated budget; $r^*$ is the smallest index at which this ratio reaches $\rho=0.8$. The rank mask keeps principal dimensions $1,\ldots,r^*$ active and treats the remaining allocated dimensions as residual capacity.}
+\caption{Elbow/energy rank selection (Eq.~\ref{eq:elbow}) on real Qwen3-8B weights, using the experiments' SVD and hyperparameters ($r_{\max}+r_{res}=20$, $\rho=0.8$, seed 42). (a) Raw singular spectrum of the layer-0 \texttt{q\_proj} matrix: a sharp knee, with the selected $r^*=8$ far below $d=4096$. (b) Cumulative energy within the truncated budget; $r^*$ is the smallest index reaching $\rho$. (c) Distribution of $r^*$ across all 72 targeted \texttt{q\_proj}/\texttt{v\_proj} matrices: every matrix selects $r^*\in[8,16]$ (mean 14.54), the range quoted throughout the paper.}
 \label{fig:elbow}
 \end{figure}
 
@@ -143,6 +147,12 @@ The schedule can be written as
 where $\tau$ is the stage boundary and $g(t)$ increases the residual contribution. A simple step schedule is sufficient in the current implementation, but smoother schedules are compatible with the same parameterization. We use separate parameter groups so that residual parameters can receive a lower learning rate. This avoids a sudden high-variance update when residual capacity is introduced.
 
 \subsection{Recursive Consolidation}
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/recursive_consolidation.pdf}
+\caption{Recursive consolidation. Each task trains a three-part decomposition of the \emph{current} effective weight: a frozen residual, a slowly updated principal component, and a fresh near-zero fast adapter. At the task boundary the trained weight is consolidated by SVD and re-split with a recomputed elbow rank, so the next task starts from the consolidated model rather than from $W_0$.}
+\label{fig:recursive-consolidation}
+\end{figure}
 The mechanisms described so far still treat the original pretrained weight $W_0$ as a permanent reference. This is a useful PEFT constraint, but it is a poor model of continual adaptation: after a task is learned, the next task should start from the consolidated effective model rather than repeatedly attaching new updates to the same untouched $W_0$. ReCoLoRA therefore decomposes the effective weight before each task into a frozen residual, a slowly trainable principal component, and a fresh fast adapter:
 \begin{equation}
     W_{\mathrm{eff}}^{(t)} = W_{\mathrm{res}}^{(t)} + W_{\mathrm{slow}}^{(t)} + \Delta W_{\mathrm{fast}}^{(t)}.
@@ -171,28 +181,25 @@ where the backbone $\theta_0$ is frozen and each branch $\phi_t$ is initialized 
 
 In this manuscript we evaluate the task-bank with oracle task routing: when evaluating task $j$, the model uses branch $\phi_j$. This matches the task-incremental continual-learning assumption where task identity is available at test time. It should be read as an upper-bound experiment rather than a complete task-agnostic deployment solution. The next step is to replace the oracle with a learned router or gated mixture that selects branches from the input prompt.
 
-\begin{table}[t]
-\centering
-\begin{tabular}{L{0.95\textwidth}}
-\toprule
-\textbf{Algorithm 1: ReCoLoRA continual fine-tuning for a task sequence} \\
-\midrule
-\textbf{Input:} pretrained model $f_{\theta}$, target modules $\mathcal{M}$, task sequence $\mathcal{T}=\{D_1,\ldots,D_T\}$, maximum rank $r_{max}$, residual rank $r_{res}$, stage boundary $\tau$. \\
-1. For each target matrix $W_0 \in \mathcal{M}$, compute approximate leading singular components using randomized SVD. \\
-2. Select an effective rank $r^*$ using the elbow criterion and construct a rank mask over $r_{max}$ allocated dimensions. \\
-3. Initialize the principal adapter from the leading singular components and initialize the residual adapter with low contribution. \\
-4. For each task $D_t$ in the sequence, optionally recompute layer-wise elbow ranks, expand the active rank mask, and freeze ranks allocated to previous tasks. \\
-5. Train Stage 1 with principal adapter updates active and residual contribution suppressed. \\
-6. After the stage boundary, activate residual recovery with a smaller residual learning rate or scheduled residual ratio. \\
-7. Consolidate the task-trained effective weight by SVD, recompute layer-wise elbow ranks, carry the compressed slow component into the next task, and reset the fast adapter (recursive consolidation, the default). \\
-8. For ReCoLoRA-TaskBank, instantiate a separate ReCoLoRA branch for each task, freeze previous branches, and route evaluation to the corresponding branch. \\
-9. After each task, evaluate all tasks seen so far and update the evaluation matrix $a_{i,j}$. \\
-\textbf{Output:} final adapter parameters, task-by-stage evaluation matrix, FinalAvg and AvgForget. \\
-\bottomrule
-\end{tabular}
-\caption{Decision-level ReCoLoRA training procedure. The backbone is frozen in the static and TaskBank variants; the default ReCoLoRA recursive consolidation instead freezes only the residual part of the previous consolidated effective weight while slowly updating the compressed principal component and training a fresh fast adapter.}
-\label{tab:algorithm}
-\end{table}
+\begin{algorithm}[t]
+\caption{ReCoLoRA continual fine-tuning with recursive consolidation. The static single-adapter variant (Appendix~\ref{app:ablations}) skips the per-task re-decomposition and instead trains one adapter on top of the frozen $W_0$ with the two-stage principal-to-residual schedule; ReCoLoRA-TaskBank instead instantiates one branch per task and freezes finished branches.}
+\label{alg:recolora}
+\begin{algorithmic}[1]
+\Require pretrained model $f_{\theta}$ with target matrices $\mathcal{M}$; task sequence $\{D_1,\ldots,D_T\}$; rank bounds $[r_{\min},r_{\max}]$; energy threshold $\rho$
+\State $W_{\mathrm{eff}}^{(0)} \gets W_0$ for every $W_0 \in \mathcal{M}$
+\For{$t = 1,\ldots,T$}
+    \ForAll{target matrices}
+        \State compute a randomized SVD of $W_{\mathrm{eff}}^{(t-1)}$ and select the elbow rank $k_t$ by Eq.~\ref{eq:elbow}
+        \State $W_{\mathrm{slow}}^{(t)} \gets \mathrm{topSVD}(W_{\mathrm{eff}}^{(t-1)},k_t)$;\quad $W_{\mathrm{res}}^{(t)} \gets W_{\mathrm{eff}}^{(t-1)} - W_{\mathrm{slow}}^{(t)}$ \Comment{residual frozen}
+        \State initialize a fresh fast adapter $\Delta W_{\mathrm{fast}}^{(t)} \approx 0$ with rank tied to $k_t$
+    \EndFor
+    \State train on $D_t$: the fast adapter receives the task learning rate; the slow component a much smaller rate; the residual stays frozen
+    \State $W_{\mathrm{eff}}^{(t)} \gets W_{\mathrm{res}}^{(t)} + W_{\mathrm{slow}}^{(t)} + \Delta W_{\mathrm{fast}}^{(t)}$ \Comment{consolidate}
+    \State evaluate tasks $1,\ldots,t$ and record $a_{t,j}$
+\EndFor
+\Ensure consolidated model; evaluation matrix $a$; FinalAvg and AvgForget
+\end{algorithmic}
+\end{algorithm}
 
 \section{Experimental Design}
 \subsection{Continual GLUE Protocol}
@@ -283,16 +290,18 @@ Table~\ref{tab:qwen3-main} reports the Qwen3-8B comparison of single-adapter PEF
 \toprule
 Method & Final Avg. $\uparrow$ & Avg. Forgetting $\downarrow$ & Trainable Params \\
 \midrule
-AdaLoRA & 0.8597 $\pm$ 0.0017 & 0.0133 $\pm$ 0.0010 & 11,503,368 \\
-DoRA & 0.8551 $\pm$ 0.0055 & 0.0487 $\pm$ 0.0058 & 7,852,032 \\
-Static ReCoLoRA & 0.8821 $\pm$ 0.0058 & 0.0240 $\pm$ 0.0054 & 6,850,688$^{*}$ \\
-ReCoLoRA-TaskBank (oracle) & \textbf{0.8957 $\pm$ 0.0026} & \textbf{0.0000 $\pm$ 0.0000} & 15,336,576/branch \\
 LoRA & 0.8634 $\pm$ 0.0071 & 0.0414 $\pm$ 0.0082 & 7,667,712 \\
-O-LoRA & 0.8722 $\pm$ 0.0064 & 0.0257 $\pm$ 0.0060 & $\sim$23,003,136 \\
 PiSSA & 0.8621 $\pm$ 0.0161 & 0.0418 $\pm$ 0.0163 & 7,667,712 \\
+AdaLoRA & 0.8597 $\pm$ 0.0017 & \textbf{0.0133 $\pm$ 0.0010} & 11,503,368 \\
+DoRA & 0.8551 $\pm$ 0.0055 & 0.0487 $\pm$ 0.0058 & 7,852,032 \\
+O-LoRA & 0.8722 $\pm$ 0.0064 & 0.0257 $\pm$ 0.0060 & $\sim$23,003,136 \\
+\midrule
+Static ReCoLoRA & \textbf{0.8821 $\pm$ 0.0058} & 0.0240 $\pm$ 0.0054 & 6,850,688$^{*}$ \\
+\midrule
+ReCoLoRA-TaskBank (oracle) & 0.8957 $\pm$ 0.0026 & 0 (by construction) & 15,336,576/branch \\
 \bottomrule
 \end{tabular}
-\caption{Qwen3-8B PEFT continual fine-tuning results on the GLUE task sequence SST-2 $\rightarrow$ MRPC $\rightarrow$ QNLI $\rightarrow$ RTE $\rightarrow$ QQP $\rightarrow$ MNLI. Results are mean $\pm$ standard deviation over seeds 42, 43, and 44. ReCoLoRA-TaskBank uses oracle task routing and should be interpreted as a task-incremental upper bound; it stores one branch per task. O-LoRA stores one low-rank adapter per task at rank 8, so memory scales with task count; the value shown is approximate for six tasks. $^{*}$Static ReCoLoRA's trainable parameter count varies slightly by seed (6,848,640--6,851,712) because the elbow/energy rank selector ($\rho \geq 0.8$ of the truncated-spectrum energy, $r_{\max}=16$) assigns a different principal rank $r\in[8,16]$ to each projection matrix; the value reported is the across-seed average.}
+\caption{Qwen3-8B PEFT continual fine-tuning results on the GLUE task sequence SST-2 $\rightarrow$ MRPC $\rightarrow$ QNLI $\rightarrow$ RTE $\rightarrow$ QQP $\rightarrow$ MNLI (mean $\pm$ std over seeds 42--44; bold marks the best single-adapter method per column). ReCoLoRA-TaskBank uses oracle task routing and one frozen branch per task, so its forgetting is zero by construction; it is an upper bound, not a competitor. O-LoRA stores one rank-8 adapter per task; the parameter value is approximate for six tasks. $^{*}$Varies slightly by seed (6,848,640--6,851,712) because the elbow/energy selector ($\rho \geq 0.8$ of the truncated-spectrum energy, $r_{\max}=16$) assigns each projection matrix its own rank $r\in[8,16]$; across-seed average shown.}
 \label{tab:qwen3-main}
 \end{table}
 
@@ -315,6 +324,7 @@ O-LoRA & 0.8255 $\pm$ 0.0067 & 0.0675 $\pm$ 0.0092 & $\sim$13,123,584 \\
 \end{table}
 
 \subsection{Recursive Consolidation on Multiple Backbones}
+\label{sec:recursive-results}
 Table~\ref{tab:recursive-backbones} evaluates ReCoLoRA against rank-swept baselines on four 7B/8B-class backbones. To address the possibility that ReCoLoRA benefits only from using a larger adaptive rank, each baseline is swept over ranks 64, 128, and 256, and the table reports the best final-average configuration for each method. ReCoLoRA is adaptive: each layer chooses an elbow-compressed slow rank with minimum rank 8 and maximum rank 256, then adds a fresh fast update for the next task.
 
 The result is favorable but not universal. Under the seed-42 comparison reported in the table, ReCoLoRA obtains the best final average score on Qwen3-8B, Mistral-7B-v0.3, and InternLM2.5-7B-Chat, with its largest apparent gain on Mistral (0.0654 final-average points over the best baseline) while using fewer trainable parameters than all rank-64 LoRA-family baselines. On Qwen3-8B and InternLM2.5-7B-Chat the gains over the best LoRA-family baseline are smaller but still positive, and Llama-3.1-8B-Instruct appears to be a negative case, with LoRA at rank 64 ahead on final average score.
@@ -357,8 +367,17 @@ Llama-3.1-8B-Instruct & ReCoLoRA & 25.4M & 0.8320 & 0.0621 \\
 \label{tab:recursive-backbones}
 \end{table}
 
+Figure~\ref{fig:results-curves} looks inside the Qwen3-8B stream. The average score on seen tasks (a) declines for every method as harder and larger tasks arrive, with ReCoLoRA staying on top after the QQP and MNLI stages. The per-task view (b) locates the difference: forgetting concentrates on the small mid-stream tasks (MRPC, QNLI, RTE), where LoRA and O-LoRA lose 3--5 points while recursive consolidation loses at most 3 and often under 1.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/results_curves.pdf}
+\caption{Qwen3-8B continual GLUE stream. (a) Average score on all tasks seen so far after each stage; shaded bands are min--max over seeds 42--44 where available. (b) Final per-task forgetting $F_j$ (Eq.~\ref{eq:avgforget}); error bars are seed ranges. Forgetting concentrates on the small mid-stream tasks, where ReCoLoRA retains the most.}
+\label{fig:results-curves}
+\end{figure}
+
 \subsection{Interpreting the Stability-Plasticity Trade-Off}
-The Qwen3-8B table shows why continual PEFT should not be judged by a single metric. Among single-adapter methods, static ReCoLoRA gives the strongest final adaptation result while keeping forgetting low. Compared with standard LoRA and PiSSA on Qwen3-8B, static ReCoLoRA improves both final score and forgetting, which supports the claim that principal initialization should be paired with a staged residual strategy rather than used only as a static initialization trick. However, the TaskBank result changes the main interpretation: explicit adapter isolation is much more effective than trying to preserve all tasks inside one shared adapter. With oracle routing, ReCoLoRA-TaskBank obtains $0.8957\pm0.0026$ final average score and zero measured forgetting across all three seeds.
+The Qwen3-8B table shows why continual PEFT should not be judged by a single metric. Among single-adapter methods, static ReCoLoRA gives the strongest final adaptation result while keeping forgetting low. Compared with standard LoRA and PiSSA on Qwen3-8B, static ReCoLoRA improves both final score and forgetting, which supports the claim that principal initialization should be paired with a staged residual strategy rather than used only as a static initialization trick. However, the TaskBank result changes the main interpretation: explicit adapter isolation is much more effective than trying to preserve all tasks inside one shared adapter. With oracle routing, ReCoLoRA-TaskBank obtains $0.8957\pm0.0026$ final average score while its frozen per-task branches rule out forgetting by construction.
 
 The recursive results sharpen the interpretation. Keeping all learning as a delta on the original $W_0$ is not the only PEFT-compatible design. By recomputing the slow principal component from the previous task's effective weight, ReCoLoRA gives the next task a consolidated starting point while still pruning low-value rank directions. The rank sweep is important: simply increasing LoRA-family ranks to 128 or 256 does not consistently improve continual learning, and in several cases it worsens final average score or forgetting. ReCoLoRA is strongest on Qwen3-8B, Mistral-7B-v0.3, and InternLM2.5-7B-Chat, but Llama-3.1-8B-Instruct remains a boundary case where standard LoRA is better. The strongest current evidence therefore points to spectrum-aware adaptation plus an explicit memory mechanism, either branch isolation for task-incremental upper-bound evaluation or recursive consolidation for a single evolving model, while also showing that the recursive schedule is backbone-sensitive.
 
@@ -368,14 +387,12 @@ Replay-based methods such as LAMOL reduce forgetting by regenerating or storing 
 
 \subsection{Limitations}
 \label{sec:limitations}
-Our scope is intentionally bounded. First, ReCoLoRA-TaskBank relies on oracle task routing and stores one branch per task: it is a valid task-incremental upper bound, but task-agnostic deployment and long task streams will require a learned router and some form of branch compression or merging. Second, the deployable recursive model is backbone-sensitive. Its advantage is robust on Qwen3-8B and InternLM2.5-7B-Chat, favorable but seed-sensitive on Mistral-7B-v0.3, and close to a tie on Llama-3.1-8B-Instruct, where rank-64 LoRA remains nominally ahead; we therefore do not claim a universally dominant adapter, and the SVD rank thresholds, residual learning rates, and slow-update schedule may need to be tuned per model family. Third, the task sequence is GLUE-style classification evaluated on a single task order; because AvgForget assigns zero forgetting to whichever task is evaluated last (Eq.~\ref{eq:avgforget}), longer instruction-following and reasoning streams, together with more task permutations and order-robust metrics, are needed before drawing order-independent conclusions.
+Our scope is intentionally bounded. First, ReCoLoRA-TaskBank relies on oracle task routing and stores one branch per task: it is a valid task-incremental upper bound, but task-agnostic deployment and long task streams will require a learned router and some form of branch compression or merging. Second, the deployable recursive model is backbone-sensitive, as quantified in Section~\ref{sec:recursive-results}; the SVD rank thresholds, residual learning rates, and slow-update schedule may need to be tuned per model family. Third, the task sequence is GLUE-style classification evaluated on a single task order; because AvgForget assigns zero forgetting to whichever task is evaluated last (Eq.~\ref{eq:avgforget}), longer instruction-following and reasoning streams, together with more task permutations and order-robust metrics, are needed before drawing order-independent conclusions.
 
 \section{Conclusion}
-We presented ReCoLoRA, a spectrum-aware PEFT framework for continual LLM fine-tuning. ReCoLoRA initializes adapters from a randomized SVD of the pretrained weight, selects an effective rank per layer with an elbow criterion, and adapts the principal subspace before the residual one; for continual use it consolidates each task recursively, re-decomposing the current effective weight into a frozen residual, a slow principal component, and a fresh adapter so that the model evolves as a single deployable network instead of a growing stack of updates on the original weight. We found that the simpler alternative, protecting old ranks inside one shared adapter through freezing or parameter-space anchoring, only trades plasticity for stability and does not reliably stop forgetting. On a six-task continual GLUE sequence over four 7--8B backbones, ReCoLoRA attains the best final average score on Qwen3-8B, Mistral-7B-v0.3, and InternLM2.5-7B-Chat with far fewer trainable parameters than the strongest rank-256 baseline, with Llama-3.1-8B-Instruct a close negative case. As an isolation upper bound under oracle routing, ReCoLoRA-TaskBank reaches $0.8957\pm0.0026$ final average score with $0.0000\pm0.0000$ average forgetting on Qwen3-8B, the ceiling that the single evolving model approaches. The picture that emerges is that spectral initialization improves how well each task is learned, while an explicit memory mechanism--recursive consolidation in one model, or branch isolation as a ceiling--is what keeps earlier tasks from being erased. Future work will add a learned router to remove the oracle assumption, branch compression for long streams, and evaluation on more task orders and longer instruction-following sequences.
+We presented ReCoLoRA, a spectrum-aware PEFT framework for continual LLM fine-tuning whose central mechanism is recursive consolidation: before each task, the current effective weight is re-decomposed into a frozen residual, a slow principal component, and a fresh adapter, so the model evolves as a single deployable network instead of a growing stack of updates on the original weight. On a six-task continual GLUE sequence over four 7--8B backbones, ReCoLoRA attains the best final average score on three of the four backbones with far fewer trainable parameters than the strongest rank-256 baseline, while protecting old ranks inside one shared adapter proved unreliable and oracle-routed branch isolation (ReCoLoRA-TaskBank) marks the retention ceiling. The picture that emerges is that spectral initialization improves how well each task is learned, while an explicit memory mechanism--recursive consolidation in one model, or branch isolation as a ceiling--is what keeps earlier tasks from being erased. Future work will add a learned router to remove the oracle assumption, branch compression for long streams, and evaluation on more task orders and longer instruction-following sequences.
 
 \appendix
-
-\noindent\emph{Note.} Throughout the appendix, ``ReCoLoRA'' without qualification denotes the static single-adapter variant (\emph{Static ReCoLoRA} in the main text); the deployable recursive method is the main-text ReCoLoRA.
 
 \section{Single-Adapter Rank Freezing}\label{app:rankfreeze}
 The original staged schedule controls when residual capacity is introduced, but it does not by itself prevent later tasks from modifying principal ranks that were useful for earlier tasks. To better match the continual-learning objective, we add an optional task-wise rank-freezing rule. At the beginning of task $t$, each target layer recomputes an elbow rank on its current effective weight and expands the active rank mask when additional capacity is needed. Let $m_{\ell,t}\in\{0,1\}^{r_{max}}$ denote the active rank mask of layer $\ell$ after task $t$ is introduced, and let $g_{\ell,t}$ denote the gradient mask. For $t>1$, old active ranks remain in the forward pass but are excluded from gradient updates:
@@ -393,7 +410,7 @@ In implementation, this is applied by masking gradients of the corresponding row
 Naively expanding the active rank mask can change the model function even before optimization if the frozen base weight already contains the SVD directions that are later reactivated through the adapter. To avoid this drift, the forward-preserving variant allocates a maximum SVD rank budget at initialization, subtracts the full allocated principal component from the frozen base, and keeps all allocated SVD directions present in the forward pass. The active-rank schedule then controls only which dimensions receive gradients. In a local sanity check, naive growth from rank 4 to rank 8 changed layer outputs by $8.8\times 10^{-1}$, while forward-preserving growth kept the output difference below $2\times 10^{-7}$. This distinction is important for continual learning because rank expansion should add trainable capacity without silently perturbing previously learned behavior.
 
 \section{Single-Adapter Validation on Llama Backbones}\label{app:llama}
-Table~\ref{tab:llama-main} reports the Llama-3.1-8B-Instruct validation under the same task sequence, seeds, and training budget. The result is intentionally reported as a robustness check rather than as a confirmation-only experiment. On this backbone, LoRA obtains the best final average score, with DoRA close behind. The original ReCoLoRA configuration improves over PiSSA and AdaLoRA in final average score but has higher forgetting. The forward-preserving frozen-rank variant reverses this behavior: it obtains the lowest forgetting in the table, but sacrifices final average score. This cross-backbone result narrows the claim: ReCoLoRA-style subspace preservation can reduce forgetting, but the current implementation is not yet a universally strongest PEFT method across all 8B backbones.
+Table~\ref{tab:llama-main} reports the Llama-3.1-8B-Instruct validation under the same task sequence, seeds, and training budget. The result is intentionally reported as a robustness check rather than as a confirmation-only experiment. On this backbone, LoRA obtains the best final average score, with DoRA close behind. The static ReCoLoRA configuration improves over PiSSA and AdaLoRA in final average score but has higher forgetting. The forward-preserving frozen-rank variant reverses this behavior: it obtains the lowest forgetting in the table, but sacrifices final average score. This cross-backbone result narrows the claim: ReCoLoRA-style subspace preservation can reduce forgetting, but the current implementation is not yet a universally strongest PEFT method across all 8B backbones.
 
 \begin{table}[t]
 \centering
@@ -403,13 +420,13 @@ Method & Final Avg. $\uparrow$ & Avg. Forgetting $\downarrow$ & Trainable Params
 \midrule
 AdaLoRA & 0.7932 $\pm$ 0.0096 & 0.0525 $\pm$ 0.0093 & 10,225,216 \\
 DoRA & 0.8407 $\pm$ 0.0123 & 0.0577 $\pm$ 0.0137 & 6,979,584 \\
-ReCoLoRA & 0.8310 $\pm$ 0.0109 & 0.0719 $\pm$ 0.0167 & 6,162,091$^{*}$ \\
-ReCoLoRA-FP freeze & 0.8214 $\pm$ 0.0050 & \textbf{0.0378 $\pm$ 0.0066} & 10,224,640 \\
+Static ReCoLoRA & 0.8310 $\pm$ 0.0109 & 0.0719 $\pm$ 0.0167 & 6,162,091$^{*}$ \\
+Static ReCoLoRA (FP freeze) & 0.8214 $\pm$ 0.0050 & \textbf{0.0378 $\pm$ 0.0066} & 10,224,640 \\
 LoRA & \textbf{0.8427 $\pm$ 0.0162} & 0.0529 $\pm$ 0.0181 & 6,815,744 \\
 PiSSA & 0.8117 $\pm$ 0.0103 & 0.0959 $\pm$ 0.0153 & 6,815,744 \\
 \bottomrule
 \end{tabular}
-\caption{Llama-3.1-8B-Instruct PEFT continual fine-tuning results on the same GLUE task sequence. Results are mean $\pm$ standard deviation over seeds 42, 43, and 44. ReCoLoRA-FP freeze denotes the forward-preserving task-wise rank-freezing variant. It lowers forgetting but also reduces final average performance, exposing the stability-plasticity trade-off. $^{*}$ReCoLoRA's trainable parameter count varies slightly by seed (6,151,168--6,175,744) because the elbow/energy rank selector ($\rho \geq 0.8$ of the truncated-spectrum energy, $r_{\max}=16$) assigns a different principal rank $r\in[8,16]$ to each projection matrix; the value reported is the across-seed average.}
+\caption{Llama-3.1-8B-Instruct PEFT continual fine-tuning results on the same GLUE task sequence (mean $\pm$ std over seeds 42--44). FP freeze denotes the forward-preserving task-wise rank-freezing variant: it lowers forgetting but also reduces final average performance, exposing the stability-plasticity trade-off. $^{*}$Varies slightly by seed (6,151,168--6,175,744) for the reason described in Table~\ref{tab:qwen3-main}; across-seed average shown.}
 \label{tab:llama-main}
 \end{table}
 
@@ -425,28 +442,22 @@ Frozen old ranks & 0.8178 $\pm$ 0.0154 & \textbf{0.0283 $\pm$ 0.0187} & 13,632,5
 Forward-preserving frozen ranks & \textbf{0.8193 $\pm$ 0.0113} & 0.0340 $\pm$ 0.0141 & 13,632,512 \\
 \bottomrule
 \end{tabular}
-\caption{Llama-3-8B ReCoLoRA rank-allocation study on the continual GLUE sequence. All variants use randomized SVD initialization and task-wise elbow recomputation. Task-wise elbow expands the active rank mask across tasks. Layer-wise bonus adds projection-type and depth-dependent rank bonuses. Frozen old ranks keeps previously active ranks in the forward pass but masks their gradients. Forward-preserving frozen ranks additionally keeps allocated inactive SVD directions present in the forward computation, so rank growth changes trainability rather than the initial function. Results are mean $\pm$ standard deviation over seeds 42, 43, and 44.}
+\caption{Llama-3-8B Static ReCoLoRA rank-allocation study on the continual GLUE sequence. All variants use randomized SVD initialization and task-wise elbow recomputation. Task-wise elbow expands the active rank mask across tasks. Layer-wise bonus adds projection-type and depth-dependent rank bonuses. Frozen old ranks keeps previously active ranks in the forward pass but masks their gradients. Forward-preserving frozen ranks additionally keeps allocated inactive SVD directions present in the forward computation, so rank growth changes trainability rather than the initial function. Results are mean $\pm$ standard deviation over seeds 42, 43, and 44.}
 \label{tab:llama-rank-freezing}
 \end{table}
 
-The Llama-3.1-8B-Instruct validation adds an important caveat. LoRA and DoRA remain stronger in final average score, but the forward-preserving frozen-rank variant has the lowest average forgetting. Compared with the earlier ReCoLoRA implementation, it reduces forgetting from 0.0719 to 0.0378, while reducing final average score from 0.8310 to 0.8214. This suggests that the spectral schedule is sensitive to backbone spectra, tokenizer-label interactions, or optimization hyperparameters, and it exposes a clear stability-plasticity trade-off.
+The Llama-3.1-8B-Instruct validation adds an important caveat. LoRA and DoRA remain stronger in final average score, but the forward-preserving frozen-rank variant has the lowest average forgetting. Compared with plain static ReCoLoRA, it reduces forgetting from 0.0719 to 0.0378, while reducing final average score from 0.8310 to 0.8214. This suggests that the spectral schedule is sensitive to backbone spectra, tokenizer-label interactions, or optimization hyperparameters, and it exposes a clear stability-plasticity trade-off.
 
 Table~\ref{tab:llama-rank-freezing} clarifies the Llama-side failure mode. Simply recomputing elbow ranks per task gives moderate final performance but still leaves substantial forgetting. Adding more rank capacity by hand through layer-wise and depth-wise bonuses is not sufficient; it actually increases forgetting in this run. Freezing old ranks changes the behavior: the final average score improves from 0.8095 to 0.8178 relative to task-wise elbow, and average forgetting drops from 0.0631 to 0.0283. The forward-preserving version obtains a similar result, with slightly higher final average score (0.8193) and slightly higher forgetting (0.0340). This supports the subspace-preservation interpretation of ReCoLoRA: later tasks should not merely receive more low-rank capacity; they should be prevented from overwriting rank dimensions already used by previous tasks, and rank growth should not introduce unintended function drift.
 
 \section{Ablations and Robustness Checks}\label{app:ablations}
-The ablations isolate the design choices in ReCoLoRA. The Qwen3-8B ablations use randomized SVD initialization, elbow-based rank control, and a static two-stage principal-to-residual transition as the final baseline. \textbf{Dynamic recovery} adds the optional residual/rank recovery allocator during Stage 2. \textbf{One-stage} removes the principal-to-residual split and activates recovery from the beginning. \textbf{Fixed-rank} bypasses the elbow rank selector and forces a uniform rank of 16. \textbf{Random-init} replaces SVD initialization with random LoRA-style initialization while keeping the dynamic recovery setting. On Llama-3-8B, we further compare task-wise elbow rank expansion, layer/depth bonus expansion, and task-wise rank freezing. These variants test whether continual robustness comes merely from adding rank capacity or from preventing old task subspaces from being overwritten.
+The ablations isolate the design choices in Static ReCoLoRA. The Qwen3-8B ablations use randomized SVD initialization, elbow-based rank control, and a static two-stage principal-to-residual transition as the final baseline. \textbf{Dynamic recovery} adds the optional residual/rank recovery allocator during Stage 2. \textbf{One-stage} removes the principal-to-residual split and activates recovery from the beginning. \textbf{Fixed-rank} bypasses the elbow rank selector and forces a uniform rank of 16. \textbf{Random-init} replaces SVD initialization with random LoRA-style initialization while keeping the dynamic recovery setting. On Llama-3-8B, we further compare task-wise elbow rank expansion, layer/depth bonus expansion, and task-wise rank freezing. These variants test whether continual robustness comes merely from adding rank capacity or from preventing old task subspaces from being overwritten.
 \subsection{Ablation Results}
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.7\linewidth]{figures/elbow_rank_histogram.pdf}
-\caption{Distribution of the selected principal rank $r^*$ across all 72 \texttt{q\_proj}/\texttt{v\_proj} matrices in Qwen3-8B under the elbow/energy criterion of Eq.~\ref{eq:elbow} ($\rho=0.8$, $r_{\max}=16$, seed 42). Every matrix selects $r^*\in[8,16]$ (mean $14.54$), confirming the $r\in[8,16]$ range used throughout the paper from the actual model weights rather than an assumed range.}
-\label{fig:elbow-hist}
-\end{figure}
-Table~\ref{tab:qwen3-ablation} reports the completed ablations. The final ReCoLoRA configuration is the static two-stage variant, which uses SVD initialization, elbow/energy rank control ($\rho=0.8$ over the truncated spectral budget, $r\in[8,16]$ per projection matrix; Figure~\ref{fig:elbow-hist} shows the empirical distribution of $r^*$ across all targeted Qwen3-8B matrices), and the principal-to-residual stage transition. This variant achieves the best final average score and the best forgetting among all variants in the table, while also using fewer trainable parameters (6,850,688 on average) than the fixed-rank variant (7,668,864).
+Table~\ref{tab:qwen3-ablation} reports the completed ablations. Static ReCoLoRA is the static two-stage variant, which uses SVD initialization, elbow/energy rank control ($\rho=0.8$ over the truncated spectral budget, $r\in[8,16]$ per projection matrix; Figure~\ref{fig:elbow}(c) shows the empirical distribution of $r^*$ across all targeted Qwen3-8B matrices), and the principal-to-residual stage transition. This variant achieves the best final average score and the best forgetting among all variants in the table, while also using fewer trainable parameters (6,850,688 on average) than the fixed-rank variant (7,668,864).
 
 The strongest negative result is the one-stage variant. Removing the principal-to-residual schedule reduces the final average score from 0.8821 to 0.6548 and increases forgetting from 0.0240 to 0.2331. This strongly supports the central scheduling hypothesis: activating the residual/recovery mechanism too early makes training unstable in the continual setting.
 
-SVD initialization remains useful: the random-init variant (0.8497/0.0455) is worse than ReCoLoRA (ours) (0.8821/0.0240) in both final average score and forgetting, even though both use the same elbow-selected per-layer ranks, which suggests that aligning the adapter with pretrained principal directions improves continual robustness independently of rank allocation. The fixed-rank comparison is informative for the first time: forcing a uniform rank of 16 at every layer (7,668,864 trainable parameters) yields both a lower final average score and higher forgetting (0.8658/0.0407) than the elbow-selected per-layer ranks of ReCoLoRA (ours) (6,850,688 parameters on average, $r\in[8,16]$), despite using more parameters. This supports the elbow/energy rank selector as a genuine accuracy and stability improvement rather than merely a parameter-reduction heuristic. The optional dynamic recovery allocator (0.8566/0.0466) remains weaker than static two-stage ReCoLoRA, so we continue to treat it as an extension that requires further tuning rather than a core component.
+SVD initialization remains useful: the random-init variant (0.8497/0.0455) is worse than Static ReCoLoRA (0.8821/0.0240) in both final average score and forgetting, even though both use the same elbow-selected per-layer ranks, which suggests that aligning the adapter with pretrained principal directions improves continual robustness independently of rank allocation. The fixed-rank comparison is informative for the first time: forcing a uniform rank of 16 at every layer (7,668,864 trainable parameters) yields both a lower final average score and higher forgetting (0.8658/0.0407) than the elbow-selected per-layer ranks of Static ReCoLoRA (6,850,688 parameters on average, $r\in[8,16]$), despite using more parameters. This supports the elbow/energy rank selector as a genuine accuracy and stability improvement rather than merely a parameter-reduction heuristic. The optional dynamic recovery allocator (0.8566/0.0466) remains weaker than static two-stage ReCoLoRA, so we continue to treat it as an extension that requires further tuning rather than a core component.
 
 \begin{table}[t]
 \centering
@@ -454,7 +465,7 @@ SVD initialization remains useful: the random-init variant (0.8497/0.0455) is wo
 \toprule
 Variant & Final Avg. $\uparrow$ & Avg. Forgetting $\downarrow$ & Trainable Params \\
 \midrule
-ReCoLoRA (ours) & \textbf{0.8821 $\pm$ 0.0058} & \textbf{0.0240 $\pm$ 0.0054} & 6,850,688$^{*}$ \\
+Static ReCoLoRA & \textbf{0.8821 $\pm$ 0.0058} & \textbf{0.0240 $\pm$ 0.0054} & 6,850,688$^{*}$ \\
 Dynamic recovery & 0.8566 $\pm$ 0.0175 & 0.0466 $\pm$ 0.0190 & 6,850,688$^{*}$ \\
 One-stage & 0.6548 $\pm$ 0.2405 & 0.2331 $\pm$ 0.2338 & 6,850,688$^{*}$ \\
 Fixed rank & 0.8658 $\pm$ 0.0211 & 0.0407 $\pm$ 0.0224 & 7,668,864 \\
@@ -469,12 +480,12 @@ Random init & 0.8497 $\pm$ 0.0052 & 0.0455 $\pm$ 0.0108 & 6,850,688$^{*}$ \\
 \label{sec:robustness-checks}
 The main results (Table~\ref{tab:qwen3-main}) use a single energy threshold $\rho=0.8$. We report a Qwen3-8B check, using the same training budget, hyperparameters, and seeds (42, 43, 44) as Table~\ref{tab:qwen3-main}, that probes the sensitivity of the main results to this choice.
 
-\paragraph{Energy-threshold sensitivity.} Figure~\ref{fig:rho-sensitivity} sweeps the energy threshold $\rho\in\{0.6,0.7,0.8,0.9,0.95\}$ in Eq.~\ref{eq:elbow}, holding the randomized SVD fixed (same 72 \texttt{q\_proj}/\texttt{v\_proj} matrices and seed as Figure~\ref{fig:elbow-hist}) and recomputing $r^*$ for each $\rho$. As $\rho\to0.95$, every matrix saturates at $r^*=r_{\max}=16$, so ReCoLoRA's principal adapter becomes parameter-equivalent to the Fixed-rank ablation in Table~\ref{tab:qwen3-ablation}; as $\rho\to0.6$, the mean selected rank drops to $9.76$ (range $[4,12]$), roughly $65\%$ of the $\rho=0.8$ adapter size. Table~\ref{tab:qwen3-rho-sensitivity} reports downstream continual fine-tuning at $\rho\in\{0.6,0.9\}$ on the main task order. Final average score and forgetting both improve monotonically as $\rho$ increases over $\{0.6,0.8,0.9\}$, and $\rho=0.9$ slightly outperforms the default $\rho=0.8$ on both metrics, though the two are within one standard deviation of each other. Notably, even at $\rho=0.9$ (mean $r^*=15.93$, $7{,}627{,}904$ trainable parameters, within $1\%$ of LoRA's $7{,}667{,}712$), ReCoLoRA still outperforms LoRA by a wide margin on both axes ($0.8849$ vs.\ $0.8634$ final average, $0.0197$ vs.\ $0.0414$ forgetting). This suggests that ReCoLoRA's gain over LoRA comes mainly from \emph{per-matrix adaptive rank and spectral initialization} rather than from aggressively shrinking the adapter, and that $\rho=0.8$ is a reasonable but not provably optimal default; within this range, $\rho=0.9$ is a plausible alternative when forgetting is the priority.
+\paragraph{Energy-threshold sensitivity.} Figure~\ref{fig:rho-sensitivity} sweeps the energy threshold $\rho\in\{0.6,0.7,0.8,0.9,0.95\}$ in Eq.~\ref{eq:elbow}, holding the randomized SVD fixed (same 72 \texttt{q\_proj}/\texttt{v\_proj} matrices and seed as Figure~\ref{fig:elbow}) and recomputing $r^*$ for each $\rho$. As $\rho\to0.95$, every matrix saturates at $r^*=r_{\max}=16$, so Static ReCoLoRA's principal adapter becomes parameter-equivalent to the Fixed-rank ablation in Table~\ref{tab:qwen3-ablation}; as $\rho\to0.6$, the mean selected rank drops to $9.76$ (range $[4,12]$), roughly $65\%$ of the $\rho=0.8$ adapter size. Table~\ref{tab:qwen3-rho-sensitivity} reports downstream continual fine-tuning at $\rho\in\{0.6,0.9\}$ on the main task order. Final average score and forgetting both improve monotonically as $\rho$ increases over $\{0.6,0.8,0.9\}$, and $\rho=0.9$ slightly outperforms the default $\rho=0.8$ on both metrics, though the two are within one standard deviation of each other. Notably, even at $\rho=0.9$ (mean $r^*=15.93$, $7{,}627{,}904$ trainable parameters, within $1\%$ of LoRA's $7{,}667{,}712$), Static ReCoLoRA still outperforms LoRA by a wide margin on both axes ($0.8849$ vs.\ $0.8634$ final average, $0.0197$ vs.\ $0.0414$ forgetting). This suggests that the gain over LoRA comes mainly from \emph{per-matrix adaptive rank and spectral initialization} rather than from aggressively shrinking the adapter, and that $\rho=0.8$ is a reasonable but not provably optimal default; within this range, $\rho=0.9$ is a plausible alternative when forgetting is the priority.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{figures/rho_sensitivity.pdf}
-\caption{Sensitivity of elbow/energy rank selection (Eq.~\ref{eq:elbow}) to the energy threshold $\rho$, computed from the same 72 Qwen3-8B \texttt{q\_proj}/\texttt{v\_proj} matrices and SVD (seed 42) as Figure~\ref{fig:elbow-hist}. (a) Mean selected rank $r^*$ (line) and per-matrix min/max range (shaded band) versus $\rho$; at $\rho=0.95$ every matrix saturates at $r_{\max}=16$. (b) Resulting principal-adapter parameter count versus $\rho$, with LoRA's $r=16$ parameter count shown for reference.}
+\caption{Sensitivity of rank selection to the energy threshold $\rho$ (same matrices and SVD as Figure~\ref{fig:elbow}). (a) Mean and min--max range of $r^*$; at $\rho=0.95$ every matrix saturates at $r_{\max}=16$. (b) Principal-adapter parameter count, with LoRA $r=16$ for reference.}
 \label{fig:rho-sensitivity}
 \end{figure}
 
@@ -489,7 +500,7 @@ $\rho$ & mean $r^*$ & Final Avg. $\uparrow$ & Avg. Forgetting $\downarrow$ & Tra
 0.9 & 15.93 & \textbf{0.8849 $\pm$ 0.0036} & \textbf{0.0197 $\pm$ 0.0025} & 7,627,904 \\
 \bottomrule
 \end{tabular}
-\caption{ReCoLoRA energy-threshold $\rho$ sensitivity on Qwen3-8B, seeds 42, 43, 44 (the $\rho=0.8$ row reproduces Table~\ref{tab:qwen3-main}). Mean $r^*$ is averaged over the 72 \texttt{q\_proj}/\texttt{v\_proj} matrices used to build Figure~\ref{fig:rho-sensitivity}. $^{*}$Trainable parameters vary slightly by seed (6,848,640--6,851,712; average shown).}
+\caption{Static ReCoLoRA energy-threshold $\rho$ sensitivity on Qwen3-8B, seeds 42, 43, 44 (the $\rho=0.8$ row reproduces Table~\ref{tab:qwen3-main}). Mean $r^*$ is averaged over the 72 \texttt{q\_proj}/\texttt{v\_proj} matrices used to build Figure~\ref{fig:rho-sensitivity}. $^{*}$Trainable parameters vary slightly by seed (6,848,640--6,851,712; average shown).}
 \label{tab:qwen3-rho-sensitivity}
 \end{table}
 
