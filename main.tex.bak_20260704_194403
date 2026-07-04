@@ -268,7 +268,7 @@ We compare the following PEFT methods:
     \item \textbf{AdaLoRA}: adaptive rank allocation during training~\cite{zhang2023adalora}.
     \item \textbf{DoRA}: weight-decomposed LoRA with magnitude-direction separation~\cite{liu2024dora}.
     \item \textbf{ReCoLoRA}: the full method---randomized SVD initialization, elbow-based rank control, staged principal-to-residual training, and recursive consolidation, which re-decomposes the effective weight at each task boundary into a frozen residual, an elbow-compressed slow principal subspace, and a fresh fast adapter.
-    \item \textbf{Static ReCoLoRA}: ReCoLoRA without recursive consolidation (a single shared adapter whose updates always sit on the original $W_0$); used as an ablation (Appendix~\ref{app:ablations}).
+    \item \textbf{Static ReCoLoRA}: ReCoLoRA without recursive consolidation (a single shared adapter whose updates always sit on the original $W_0$); used as an ablation.
     \item \textbf{ReCoLoRA-TaskBank}: an oracle-routed task-incremental variant that trains an isolated ReCoLoRA branch for each task and freezes old branches.
 \end{itemize}
 All methods use the same task order and random seeds. For Qwen, Llama, and Mistral backbones, adapters target the query and value projection modules; for InternLM2.5-7B-Chat, the adapters target the fused attention projection and output projection modules used by the local model implementation. Each task is trained for 200 optimizer steps, with maximum sequence length 256 and at most 1000 evaluation samples per task. We report mean and standard deviation over seeds 42, 43, and 44. TaskBank uses oracle task identity at evaluation, so it is reported as a task-incremental upper bound rather than as a task-agnostic router.
@@ -353,7 +353,7 @@ Llama-3.1-8B-Instruct & DoRA (r=256) & 109.2M & 0.8177 & 0.0923 \\
 Llama-3.1-8B-Instruct & ReCoLoRA & 25.4M & 0.8320 & 0.0621 \\
 \bottomrule
 \end{tabular}}
-\caption{ReCoLoRA and rank-swept PEFT baselines on the six-task continual GLUE sequence. For each baseline method and backbone, ranks 64, 128, and 256 are swept and the row reports the rank with the highest final average score. Results in this table use seed 42 for all methods; a three-seed robustness check for ReCoLoRA is discussed in the text below the table. AdaLoRA at rank 256 exceeded our GPU memory budget for Qwen3-8B and InternLM2.5-7B-Chat, so the best completed rank is reported for those backbones instead. ReCoLoRA uses elbow-only consolidation with minimum rank 8 and maximum rank 256.}
+\caption{ReCoLoRA and rank-swept PEFT baselines on the six-task continual GLUE sequence. For each baseline method and backbone, ranks 64, 128, and 256 are swept and the row reports the rank with the highest final average score. Results in this table use seed 42 for all methods; a three-seed robustness check for ReCoLoRA is discussed in the text below the table. AdaLoRA at rank 256 ran out of memory on Qwen3-8B and InternLM2.5-7B-Chat on the available RTX 2080 Ti, so the best completed AdaLoRA rank is reported for those backbones. ReCoLoRA uses elbow-only consolidation with minimum rank 8 and maximum rank 256.}
 \label{tab:recursive-backbones}
 \end{table}
 
