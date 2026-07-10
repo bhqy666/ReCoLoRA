@@ -1,6 +1,6 @@
 # ReCoLoRA: Spectrum-Aware Recursive Consolidation for Continual LLM Fine-Tuning
 
-Code and raw results for the paper *ReCoLoRA: Spectrum-Aware Recursive Consolidation for Continual LLM Fine-Tuning* (arXiv link to be added).
+Code and raw results for the paper *ReCoLoRA: Spectrum-Aware Recursive Consolidation for Continual LLM Fine-Tuning* ([arXiv:2607.07719](https://arxiv.org/abs/2607.07719)).
 
 > Note: CLI method keys (`--method hilora` = Static ReCoLoRA, `--method recursive_hilora` = ReCoLoRA) and `outputs/` directory names keep the project's historical internal keys so that launcher scripts, recorded run configs, and released raw results stay consistent; `recolora`/`static_recolora` are accepted aliases. Everything else in the code uses the ReCoLoRA name.
 
